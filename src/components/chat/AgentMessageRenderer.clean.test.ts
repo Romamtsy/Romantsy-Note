@@ -49,7 +49,7 @@ describe("AgentMessageRenderer", () => {
   it("hides the stricter image-mode provider wrapper", () => {
     const content = [
       "Use the image-gen skill to generate an image.",
-      "The configured image provider available for this request is `openai-image` (gpt-image-2). Use only this provider. Do not switch to Google, Seedream, ByteDance, or any other provider unless Lumina explicitly lists it as configured.",
+      "The configured image provider available for this request is `openai-image` (gpt-image-2). Use only this provider. Do not switch to Google, Seedream, ByteDance, or any other provider unless Romantsy explicitly lists it as configured.",
       "Keep provider routing separate from prompt interpretation: the language the user typed in is not by itself a reason to switch providers.",
       "Preserve explicit visual constraints from the user, including medium, region, era, genre, culture, composition, subject, mood, palette, and style descriptors. Do not replace a specific descriptor with a nearby default style unless the user asked for that.",
       "Handle visible text as its own requirement: if the user asks for readable text, preserve the requested text and language; if they do not ask for readable text, ask the image model to avoid readable text, letters, captions, labels, and speech bubbles.",

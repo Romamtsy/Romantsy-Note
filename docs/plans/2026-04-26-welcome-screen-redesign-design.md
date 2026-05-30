@@ -53,7 +53,7 @@ Redesign the application's welcome/onboarding screen from a minimal centered lay
 - **Layout**: Centered content with `max-width: 640px`
 - **Brand Area**:
   - Lumina logo (80x80, same as current)
-  - "Lumina Note" title (text-3xl, font-semibold)
+  - "Romantsy-Note" title (text-3xl, font-semibold)
   - No subtitle (the action cards provide enough context)
 - **Action Cards** (vertical stack, gap-3):
   - **Open Existing Vault**

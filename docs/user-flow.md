@@ -1,4 +1,4 @@
-# Lumina Note User Guide
+# Romantsy-Note User Guide
 
 This is a practical guide. The first section is a map of **where every feature lives**. The rest is a few starter workflows that string the pieces together.
 
@@ -35,7 +35,7 @@ The left **ribbon** is the column of icons running down the left edge of the win
 
 ## 5-minute setup
 
-1. Install Lumina Note from [Releases](https://github.com/blueberrycongee/Lumina-Note/releases) and launch it.
+1. Install Romantsy-Note from [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases) and launch it.
 2. Pick a local folder as your **vault**.
 3. Open **Settings → AI**, add an API key for your provider (OpenAI / Claude / Gemini / DeepSeek / Moonshot / Zhipu / Groq / OpenRouter / Ollama / any OpenAI-compatible endpoint…), and pick a model.
 4. Create your first note. Type `[[` to start a wikilink — autocompletion suggests existing notes; pressing Enter creates a new one if it doesn't exist.

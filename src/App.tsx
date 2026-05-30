@@ -49,6 +49,7 @@ import {
   join,
   exists,
 } from "@/lib/host";
+import { createRomantsyDemoVault } from "@/services/demoVault";
 import { TitleBar } from "@/components/layout/TitleBar";
 import { useMacTopChromeEnabled } from "@/components/layout/MacTopChrome";
 import { MacLeftPaneTopBar } from "@/components/layout/MacLeftPaneTopBar";
@@ -74,7 +75,7 @@ import {
   initResumableUpdateListeners,
   useUpdateStore,
 } from "@/stores/useUpdateStore";
-import { isTauriAvailable } from "@/lib/host";
+import { isHostBridgeAvailable } from "@/lib/host";
 import { hydrateProxyConfigOnStartup } from "@/lib/proxyStartup";
 import { useReducedMotion } from "framer-motion";
 
@@ -383,7 +384,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!isTauriAvailable()) {
+    if (!isHostBridgeAvailable()) {
       setCurrentUpdateVersion(null);
       return;
     }
@@ -698,7 +699,7 @@ function App() {
 
   // Send dirty state to Electron main process for close protection
   useEffect(() => {
-    if (!isTauriAvailable()) return;
+    if (!isHostBridgeAvailable()) return;
 
     const sendDirtyState = () => {
       const { isDirty, tabs } = useFileStore.getState();
@@ -939,6 +940,19 @@ function App() {
     [setVaultPath],
   );
 
+  const handleCreateDemoVault = useCallback(async () => {
+    try {
+      const home = await homeDir();
+      const docsPath = await join(home, "Documents");
+      const docsExists = await exists(docsPath);
+      const parentPath = docsExists ? docsPath : home;
+      const demoPath = await createRomantsyDemoVault(parentPath);
+      await setVaultPath(demoPath);
+    } catch (error) {
+      console.error("[App.handleCreateDemoVault] Failed to create demo vault:", error);
+    }
+  }, [setVaultPath]);
+
   // Listen for window-level entry actions dispatched from top-level chrome
   useEffect(() => {
     const onOpenVault = () => handleOpenVault();
@@ -1083,6 +1097,7 @@ function App() {
         <WelcomeScreen
           onOpenVault={handleOpenVault}
           onCreateVault={handleCreateVault}
+          onCreateDemoVault={handleCreateDemoVault}
         />
         <AutoTooltipHost />
         <Toaster position="bottom-right" theme="system" richColors closeButton />
@@ -1318,6 +1333,10 @@ function App() {
           <WelcomeScreen
             onOpenVault={async (path) => {
               await handleOpenVault(path);
+              setWelcomePreview(false);
+            }}
+            onCreateDemoVault={async () => {
+              await handleCreateDemoVault();
               setWelcomePreview(false);
             }}
           />

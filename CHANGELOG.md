@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Lumina Note will be documented in this file.
+All notable changes to Romantsy-Note will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -277,7 +277,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AI 交互模型收敛为 Agent-only：移除 Chat 模式与 Codex 模式、下线 ModeToggle 切换入口，Agent 面板成为统一入口
 - 侧边栏与 Ribbon 精简：移除已废弃模块的入口、插件中对上述模块的引用，以及 RAG 状态栏
 - 深度研究（Deep Research）流程及其 orchestration stage / PlanCard 已全量移除
-- 应用更名 Neurone → Lumina Note，调整窗口标题与相关品牌字串
+- 应用更名 Neurone → Romantsy-Note，调整窗口标题与相关品牌字串
 
 ### 新功能
 - **Electron 迁移完成**：完整切换到 Electron 打包脚手架、preload 桥、工作区相关 IPC 通道与更新检查管线，并落地多平台发布产物（mac arm64/x64、win x64、linux x64）

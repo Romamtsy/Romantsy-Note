@@ -1,4 +1,4 @@
-# Lumina Note 使用指南（中文）
+# Romantsy-Note 使用指南（中文）
 
 这份文档分两部分：第一部分是**每个功能在哪里**的功能-入口对照表，第二部分是几条把功能串起来用的工作流。
 
@@ -39,7 +39,7 @@
 
 ## 5 分钟上手
 
-1. 从 [Releases](https://github.com/blueberrycongee/Lumina-Note/releases) 安装并启动应用。
+1. 从 [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases) 安装并启动应用。
 2. 选一个本地文件夹作为 **vault**。
 3. 进 **设置 → AI**，添加 API Key（OpenAI / Claude / Gemini / DeepSeek / Moonshot / 智谱 / Groq / OpenRouter / Ollama / 任意 OpenAI 协议兼容端点……），选一个模型。
 4. 新建一条笔记，输入 `[[` 启动 wikilink —— 已有笔记会自动补全；按 Enter 没有就直接创建。

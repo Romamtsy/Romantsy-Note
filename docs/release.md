@@ -1,6 +1,6 @@
 # Release workflow
 
-This document describes the recommended release workflow for Lumina Note.
+This document describes the recommended release workflow for Romantsy-Note.
 
 ## 1) Update CHANGELOG.md (Required)
 

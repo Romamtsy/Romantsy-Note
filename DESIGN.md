@@ -1,5 +1,5 @@
 ---
-name: Lumina Note
+name: Romantsy-Note
 description: Local-first AI markdown notebook — Inter-led, monochrome, Apple/OpenAI-restraint
 colors:
   background: "#fbfcfd"
@@ -126,13 +126,13 @@ components:
     typography: "{typography.label}"
 ---
 
-# Design System: Lumina Note
+# Design System: Romantsy-Note
 
 ## 1. Overview
 
 **Creative North Star: "The Quiet Workshop"**
 
-Lumina Note is a desk for thinking, not a stage. The interface is the surface a serious notebook sits on — the wood, the lamp, the margin. The user's writing, the AI's edits, the graph of links between them — those are what move and change. Everything else stays still, neutral, and quiet enough that hours of editing don't accumulate visual fatigue.
+Romantsy-Note is a desk for thinking, not a stage. The interface is the surface a serious notebook sits on — the wood, the lamp, the margin. The user's writing, the AI's edits, the graph of links between them — those are what move and change. Everything else stays still, neutral, and quiet enough that hours of editing don't accumulate visual fatigue.
 
 The system is monochrome by default — a near-white canvas with cool-gray panels and near-black text. There is no brand color tinting the chrome, because the *brand is the restraint*. Color appears only as semantic state (destructive red, success green, warning orange, info blue), and even those are muted one notch from typical Tailwind defaults so they coexist with notes the user pastes in. AI surfaces — chat, agent runs, model pickers, mention menus — share the editor's typography, motion timing, and component vocabulary. They are not visually announced as a separate product.
 

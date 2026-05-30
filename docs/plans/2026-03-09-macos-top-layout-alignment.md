@@ -138,48 +138,48 @@
 ## 四、相关代码范围（只列文件地址）
 
 ### 1. 窗口与 macOS 标题栏配置
-- `/Users/zzzz/Lumina-Note/src-tauri/tauri.macos.conf.json`
-- `/Users/zzzz/Lumina-Note/src-tauri/src/main.rs`
-- `/Users/zzzz/Lumina-Note/src-tauri/tests/macos_overlay_config.rs`
-- `/Users/zzzz/Lumina-Note/src-tauri/tests/tauri_config_titlebar.rs`
+- `/Users/zzzz/Romantsy-Note/src-tauri/tauri.macos.conf.json`
+- `/Users/zzzz/Romantsy-Note/src-tauri/src/main.rs`
+- `/Users/zzzz/Romantsy-Note/src-tauri/tests/macos_overlay_config.rs`
+- `/Users/zzzz/Romantsy-Note/src-tauri/tests/tauri_config_titlebar.rs`
 
 ### 2. 顶层窗口布局入口
-- `/Users/zzzz/Lumina-Note/src/App.tsx`
+- `/Users/zzzz/Romantsy-Note/src/App.tsx`
 
 ### 3. 标题栏 / mac 顶部处理
-- `/Users/zzzz/Lumina-Note/src/components/layout/TitleBar.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/TitleBar.test.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/TitleBar.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/TitleBar.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.test.tsx`
 
 ### 4. 左侧区域骨架
-- `/Users/zzzz/Lumina-Note/src/components/layout/Ribbon.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/Ribbon.test.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/Sidebar.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/sidebarSurface.ts`
-- `/Users/zzzz/Lumina-Note/src/components/toolbar/ResizeHandle.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/Ribbon.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/Ribbon.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/Sidebar.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/sidebarSurface.ts`
+- `/Users/zzzz/Romantsy-Note/src/components/toolbar/ResizeHandle.tsx`
 
 ### 5. 主内容顶部结构
-- `/Users/zzzz/Lumina-Note/src/components/layout/TabBar.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/SplitEditor.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MainAIChatShell.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/TabBar.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/SplitEditor.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MainAIChatShell.tsx`
 
 ### 6. 右侧区域与附加壳层
-- `/Users/zzzz/Lumina-Note/src/components/layout/RightPanel.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/plugins/PluginShellSlotHost.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/ErrorNotifications.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/RightPanel.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/plugins/PluginShellSlotHost.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/ErrorNotifications.tsx`
 
 ### 7. 欢迎页与特殊空状态
-- `/Users/zzzz/Lumina-Note/src/components/onboarding/WelcomeScreen.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/onboarding/WelcomeScreen.tsx`
 
 ### 8. 状态与尺寸控制
-- `/Users/zzzz/Lumina-Note/src/stores/useUIStore.ts`
-- `/Users/zzzz/Lumina-Note/src/stores/useFileStore.ts`
-- `/Users/zzzz/Lumina-Note/src/stores/usePluginStore.ts`
-- `/Users/zzzz/Lumina-Note/src/stores/usePluginUiStore.ts`
+- `/Users/zzzz/Romantsy-Note/src/stores/useUIStore.ts`
+- `/Users/zzzz/Romantsy-Note/src/stores/useFileStore.ts`
+- `/Users/zzzz/Romantsy-Note/src/stores/usePluginStore.ts`
+- `/Users/zzzz/Romantsy-Note/src/stores/usePluginUiStore.ts`
 
 ### 9. 全局样式与表面样式
-- `/Users/zzzz/Lumina-Note/src/styles/globals.css`
+- `/Users/zzzz/Romantsy-Note/src/styles/globals.css`
 
 ---
 
@@ -269,14 +269,14 @@
 为了增强理解，建议在实现前主动扩大搜索范围。
 
 ### 建议扩大阅读的目录范围
-- `/Users/zzzz/Lumina-Note/src/components/layout`
-- `/Users/zzzz/Lumina-Note/src/components/toolbar`
-- `/Users/zzzz/Lumina-Note/src/components/onboarding`
-- `/Users/zzzz/Lumina-Note/src/components/plugins`
-- `/Users/zzzz/Lumina-Note/src/stores`
-- `/Users/zzzz/Lumina-Note/src/styles`
-- `/Users/zzzz/Lumina-Note/src-tauri`
-- `/Users/zzzz/Lumina-Note/docs/plans`
+- `/Users/zzzz/Romantsy-Note/src/components/layout`
+- `/Users/zzzz/Romantsy-Note/src/components/toolbar`
+- `/Users/zzzz/Romantsy-Note/src/components/onboarding`
+- `/Users/zzzz/Romantsy-Note/src/components/plugins`
+- `/Users/zzzz/Romantsy-Note/src/stores`
+- `/Users/zzzz/Romantsy-Note/src/styles`
+- `/Users/zzzz/Romantsy-Note/src-tauri`
+- `/Users/zzzz/Romantsy-Note/docs/plans`
 
 ### 建议重点搜索的关键词
 - `data-tauri-drag-region`
@@ -299,10 +299,10 @@
 
 ### 建议对比阅读的现有组件
 这些组件虽然不是“顶层骨架”，但能帮助理解项目里已经存在的 header / pane 结构习惯：
-- `/Users/zzzz/Lumina-Note/src/components/layout/SplitEditor.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MainAIChatShell.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/plugins/PluginViewPane.tsx`
-- `/Users/zzzz/Lumina-Note/src/components/layout/RightPanel.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/SplitEditor.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MainAIChatShell.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/plugins/PluginViewPane.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/RightPanel.tsx`
 
 ### 建议扩大理解的原因
 这样做的目的不是“看更多文件”，而是避免以下误判：

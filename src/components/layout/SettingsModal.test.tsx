@@ -212,7 +212,7 @@ describe("SettingsModal", () => {
     onOpenUpdateModal.mockClear();
   });
 
-  it("renders tabbed navigation with 6 tabs", () => {
+  it("renders the Romantsy settings navigation without the legacy account tab", () => {
     render(
       <SettingsModal
         isOpen
@@ -225,11 +225,11 @@ describe("SettingsModal", () => {
     expect(screen.getByText("AI")).toBeInTheDocument();
     expect(screen.getByText("Sync")).toBeInTheDocument();
     expect(screen.getByText("Network")).toBeInTheDocument();
-    expect(screen.getByText("Account")).toBeInTheDocument();
+    expect(screen.queryByText("Account")).not.toBeInTheDocument();
     expect(screen.getByText("System")).toBeInTheDocument();
   });
 
-  it("switches to account tab and shows license + usage panels", () => {
+  it("hides legacy cloud license panels from the settings nav", () => {
     render(
       <SettingsModal
         isOpen
@@ -238,10 +238,9 @@ describe("SettingsModal", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("Account"));
-
-    expect(screen.getByText("LicenseSettings")).toBeInTheDocument();
-    expect(screen.getByText("CloudUsagePanel")).toBeInTheDocument();
+    expect(screen.queryByText("Account")).not.toBeInTheDocument();
+    expect(screen.queryByText("LicenseSettings")).not.toBeInTheDocument();
+    expect(screen.queryByText("CloudUsagePanel")).not.toBeInTheDocument();
   });
 
   it("defaults to general tab showing theme and editor", () => {

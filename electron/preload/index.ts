@@ -20,9 +20,9 @@ ipcRenderer.on('__tauri_event__', (_event, eventName: string, payload: unknown) 
 })
 
 // ── Tauri v2 internals shim ──────────────────────────────────────────────────
-const tauriInternals = {
+const hostInternals = {
   invoke: async (cmd: string, args: Record<string, unknown> = {}): Promise<unknown> => {
-    return ipcRenderer.invoke('tauri-invoke', cmd, args)
+    return ipcRenderer.invoke('host-invoke', cmd, args)
   },
 
   listen: async (event: string, handler: EventHandler): Promise<() => void> => {
@@ -30,7 +30,7 @@ const tauriInternals = {
     const id = nextHandlerId++
     eventHandlers.get(event)!.set(id, handler)
     // Register with main process (returns an ID but we manage locally)
-    ipcRenderer.invoke('tauri-invoke', 'plugin:event|listen', { event, handler: id }).catch(() => {})
+    ipcRenderer.invoke('host-invoke', 'plugin:event|listen', { event, handler: id }).catch(() => {})
     return () => {
       eventHandlers.get(event)?.delete(id)
     }
@@ -46,7 +46,7 @@ const tauriInternals = {
       handler(e)
       unlisten?.()
     }
-    unlisten = await tauriInternals.listen(event, wrappedHandler)
+    unlisten = await hostInternals.listen(event, wrappedHandler)
     return unlisten
   },
 
@@ -70,10 +70,11 @@ const tauriInternals = {
   },
 }
 
-contextBridge.exposeInMainWorld('__TAURI_INTERNALS__', tauriInternals)
+contextBridge.exposeInMainWorld('__HOST_INTERNALS__', hostInternals)
+contextBridge.exposeInMainWorld('__TAURI_INTERNALS__', hostInternals)
 contextBridge.exposeInMainWorld('__TAURI__', {
   core: {
-    invoke: tauriInternals.invoke,
+    invoke: hostInternals.invoke,
   },
 })
 
@@ -126,4 +127,4 @@ ipcRenderer.on('main-console', (_event, payload: MainLogPayload) => {
 })
 
 ipcRenderer.send('__preload_ready')
-console.log('[preload] __TAURI_INTERNALS__ shim installed')
+console.log('[preload] host bridge installed')

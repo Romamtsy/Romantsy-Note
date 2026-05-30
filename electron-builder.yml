@@ -1,5 +1,5 @@
-appId: com.luminanote.app
-productName: Lumina Note
+appId: com.romantsynote.app
+productName: Romantsy-Note
 
 # Targets: mac arm64+x64 (dmg+zip), win x64 (nsis), linux AppImage.
 # Publishing goes through GitHub Releases; electron-updater reads the
@@ -8,7 +8,7 @@ productName: Lumina Note
 publish:
   provider: github
   owner: blueberrycongee
-  repo: Lumina-Note
+  repo: Romantsy-Note
   releaseType: release
 
 directories:

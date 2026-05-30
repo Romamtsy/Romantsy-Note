@@ -1,16 +1,16 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 
-const { checkMock, invokeMock, listenMock, isTauriAvailableMock } = vi.hoisted(() => ({
+const { checkMock, invokeMock, listenMock, hostBridgeAvailableMock } = vi.hoisted(() => ({
   checkMock: vi.fn(),
   invokeMock: vi.fn(),
   listenMock: vi.fn(),
-  isTauriAvailableMock: vi.fn(),
+  hostBridgeAvailableMock: vi.fn(),
 }));
 
 vi.mock("@/lib/host", () => ({
   invoke: invokeMock,
   listen: listenMock,
-  isTauriAvailable: isTauriAvailableMock,
+  isHostBridgeAvailable: hostBridgeAvailableMock,
   check: checkMock,
 }));
 
@@ -27,10 +27,10 @@ describe("useUpdateStore.checkForUpdate", () => {
     checkMock.mockReset();
     invokeMock.mockReset();
     listenMock.mockReset();
-    isTauriAvailableMock.mockReset();
+    hostBridgeAvailableMock.mockReset();
     listenMock.mockResolvedValue(vi.fn());
     invokeMock.mockResolvedValue(null);
-    isTauriAvailableMock.mockReturnValue(true);
+    hostBridgeAvailableMock.mockReturnValue(true);
     useUpdateStore.persist?.clearStorage?.();
     useUpdateStore.setState({
       lastCheckTime: 0,
@@ -269,7 +269,7 @@ describe("useUpdateStore.checkForUpdate", () => {
   });
 
   it("skips resumable listener init when Tauri bridge is unavailable", async () => {
-    isTauriAvailableMock.mockReturnValue(false);
+    hostBridgeAvailableMock.mockReturnValue(false);
 
     await initResumableUpdateListeners();
 
@@ -278,7 +278,7 @@ describe("useUpdateStore.checkForUpdate", () => {
   });
 
   it("skips update checks during startup when Tauri bridge is unavailable", async () => {
-    isTauriAvailableMock.mockReturnValue(false);
+    hostBridgeAvailableMock.mockReturnValue(false);
 
     initAutoUpdateCheck(5000);
     await vi.runAllTimersAsync();
@@ -287,7 +287,7 @@ describe("useUpdateStore.checkForUpdate", () => {
   });
 
   it("returns unsupported without invoking updater check when Tauri bridge is unavailable", async () => {
-    isTauriAvailableMock.mockReturnValue(false);
+    hostBridgeAvailableMock.mockReturnValue(false);
 
     const result = await checkForUpdate(true);
 

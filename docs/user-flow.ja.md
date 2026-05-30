@@ -1,4 +1,4 @@
-# Lumina Note ユーザーガイド（日本語）
+# Romantsy-Note ユーザーガイド（日本語）
 
 このガイドは 2 部構成です。前半は **どの機能がどこにあるか** の対応表。後半はその機能を実際につなげて使うためのスターターワークフロー。
 
@@ -39,7 +39,7 @@
 
 ## 5 分セットアップ
 
-1. [Releases](https://github.com/blueberrycongee/Lumina-Note/releases) から Lumina Note をインストールして起動。
+1. [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases) から Romantsy-Note をインストールして起動。
 2. ローカルフォルダを **Vault** として選択。
 3. **設定 → AI** で API Key を入れてモデルを選ぶ（OpenAI / Claude / Gemini / DeepSeek / Moonshot / 智譜 / Groq / OpenRouter / Ollama / OpenAI 互換エンドポイントなど）。
 4. 最初のノートを作る。`[[` と打つと既存ノートを補完候補として出す。Enter で新規作成も可能。

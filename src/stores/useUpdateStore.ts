@@ -11,7 +11,7 @@ import { invoke } from "@/lib/host";
 import { listen, UnlistenFn } from "@/lib/host";
 import { reportOperationError } from "@/lib/reportError";
 import { retryWithExponentialBackoff } from "@/lib/retry";
-import { isTauriAvailable } from "@/lib/host";
+import { isHostBridgeAvailable } from "@/lib/host";
 
 export const UPDATE_CHECK_TIMEOUT_MS = 15_000;
 const UPDATE_CHECK_MAX_ATTEMPTS = 3;
@@ -622,7 +622,7 @@ export const isResumableUpdaterEnabled = (): boolean => {
 
 export async function initResumableUpdateListeners(): Promise<void> {
   if (!isResumableUpdaterEnabled()) return;
-  if (!isTauriAvailable()) return;
+  if (!isHostBridgeAvailable()) return;
   if (resumableInitPromise) return resumableInitPromise;
 
   resumableInitPromise = (async () => {
@@ -699,7 +699,7 @@ export function shouldCheckForUpdate(): boolean {
  * @returns 是否有可用更新
  */
 export async function checkForUpdate(force = false): Promise<UpdateCheckResult> {
-  if (!isTauriAvailable()) {
+  if (!isHostBridgeAvailable()) {
     return "unsupported";
   }
 
@@ -776,7 +776,7 @@ export async function checkForUpdate(force = false): Promise<UpdateCheckResult> 
  * 应在 App 启动时调用，会延迟执行以避免影响启动性能
  */
 export function initAutoUpdateCheck(delayMs = 5000): void {
-  if (!isTauriAvailable()) return;
+  if (!isHostBridgeAvailable()) return;
 
   setTimeout(async () => {
     try {

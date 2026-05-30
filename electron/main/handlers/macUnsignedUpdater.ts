@@ -21,7 +21,7 @@ import { parse as parseYaml } from "yaml";
 import type { AutoUpdaterLike } from "./updater.js";
 
 const GITHUB_OWNER = "blueberrycongee";
-const GITHUB_REPO = "Lumina-Note";
+const GITHUB_REPO = "Romantsy-Note";
 const MAX_DOWNLOAD_ATTEMPTS = 3;
 const INITIAL_RETRY_DELAY_MS = 1_500;
 const INSTALL_WAIT_TIMEOUT_S = 30;
@@ -149,7 +149,7 @@ function assertInstallLocationWritable(): void {
     accessSync(dirname(getAppBundlePath()), constants.W_OK);
   } catch {
     const error = new Error(
-      "Cannot install updates from this app location. Move Lumina Note to /Applications and try again.",
+      "Cannot install updates from this app location. Move Romantsy-Note to /Applications and try again.",
     ) as NodeJS.ErrnoException;
     error.code = LOCATION_NOT_WRITABLE;
     throw error;
@@ -434,7 +434,7 @@ export class MacUnsignedUpdater
     try {
       const json = await requestText(
         releaseApiUrl(release.version),
-        `Lumina-Note/${app.getVersion()}`,
+        `Romantsy-Note/${app.getVersion()}`,
       );
       const parsed = JSON.parse(json) as GithubReleaseResponse;
       if (typeof parsed.body === "string") {

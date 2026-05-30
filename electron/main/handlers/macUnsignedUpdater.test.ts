@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("electron", () => ({
   app: {
-    getAppPath: () => "/Applications/Lumina Note.app/Contents/Resources/app.asar",
-    getPath: () => "/tmp/lumina-note",
+    getAppPath: () => "/Applications/Romantsy-Note.app/Contents/Resources/app.asar",
+    getPath: () => "/tmp/romantsy-note",
     getVersion: () => "1.4.2",
     on: vi.fn(),
     quit: vi.fn(),
@@ -24,13 +24,13 @@ describe("parseLatestMacYml", () => {
     const result = parseLatestMacYml(`
 version: 1.5.0
 files:
-  - url: Lumina Note-1.5.0-arm64-mac.zip
+  - url: Romantsy-Note-1.5.0-arm64-mac.zip
     sha512: arm-hash
     size: 120
-  - url: Lumina Note-1.5.0-mac.zip
+  - url: Romantsy-Note-1.5.0-mac.zip
     sha512: x64-hash
     size: 100
-path: Lumina Note-1.5.0-arm64-mac.zip
+path: Romantsy-Note-1.5.0-arm64-mac.zip
 sha512: arm-hash
 releaseDate: '2026-05-13T10:00:00.000Z'
 `);
@@ -41,12 +41,12 @@ releaseDate: '2026-05-13T10:00:00.000Z'
       releaseNotes: null,
       files: [
         {
-          url: "Lumina Note-1.5.0-arm64-mac.zip",
+          url: "Romantsy-Note-1.5.0-arm64-mac.zip",
           sha512: "arm-hash",
           size: 120,
         },
         {
-          url: "Lumina Note-1.5.0-mac.zip",
+          url: "Romantsy-Note-1.5.0-mac.zip",
           sha512: "x64-hash",
           size: 100,
         },
@@ -58,16 +58,16 @@ releaseDate: '2026-05-13T10:00:00.000Z'
     const result = parseLatestMacYml(`
 version: 1.5.0
 files:
-  - url: Lumina Note-1.5.0-arm64-mac.zip
+  - url: Romantsy-Note-1.5.0-arm64-mac.zip
     sha512: arm-hash
-  - url: Lumina Note-1.5.0-mac.zip
+  - url: Romantsy-Note-1.5.0-mac.zip
     sha512: x64-hash
     size: 100
 `);
 
     expect(result.files).toEqual([
       {
-        url: "Lumina Note-1.5.0-mac.zip",
+        url: "Romantsy-Note-1.5.0-mac.zip",
         sha512: "x64-hash",
         size: 100,
       },
@@ -77,19 +77,19 @@ files:
 
 describe("selectMacZipFile", () => {
   const files = [
-    { url: "Lumina Note-1.5.0-arm64-mac.zip", sha512: "a", size: 10 },
-    { url: "Lumina Note-1.5.0-mac.zip", sha512: "b", size: 20 },
+    { url: "Romantsy-Note-1.5.0-arm64-mac.zip", sha512: "a", size: 10 },
+    { url: "Romantsy-Note-1.5.0-mac.zip", sha512: "b", size: 20 },
   ];
 
   it("selects the arm64 ZIP for Apple Silicon", () => {
     expect(selectMacZipFile(files, "arm64")?.url).toBe(
-      "Lumina Note-1.5.0-arm64-mac.zip",
+      "Romantsy-Note-1.5.0-arm64-mac.zip",
     );
   });
 
   it("selects the non-arm64 ZIP for x64", () => {
     expect(selectMacZipFile(files, "x64")?.url).toBe(
-      "Lumina Note-1.5.0-mac.zip",
+      "Romantsy-Note-1.5.0-mac.zip",
     );
   });
 });

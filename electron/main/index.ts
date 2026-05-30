@@ -4,8 +4,9 @@
 // freeze the paths before we get a chance to redirect them.
 import "./agent-v2/opencode-xdg.js";
 
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, dialog, Menu } from "electron";
 import path from "path";
+import { fileURLToPath } from "url";
 
 // Force overlay scrollbars so custom ::-webkit-scrollbar CSS does not
 // push content left (classic mode). The scrollbar paints on top instead.
@@ -41,6 +42,9 @@ import { setLuminaPluginContext } from "./agent-v2/plugin/context.js";
 import { WikiSettingsStore } from "./wiki/settings-store.js";
 import { WikiManager } from "./wiki/manager.js";
 import { createMainWindowOptions } from "./window-config.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ── State ──────────────────────────────────────────────────────────────────
 let mainWindow: BrowserWindow | null = null;
@@ -81,7 +85,6 @@ export default function createWindow(): BrowserWindow {
 
   win.on("close", (e) => {
     if (dirtyFileCount > 0) {
-      const { dialog } = require("electron");
       const choice = dialog.showMessageBoxSync(win, {
         type: "warning",
         buttons: ["Cancel", "Close Without Saving"],

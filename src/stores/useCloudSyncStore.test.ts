@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useWebDAVStore } from '@/stores/useWebDAVStore';
 import { useCloudSyncStore } from '@/stores/useCloudSyncStore';
 
-const tauriFetchJsonMock = vi.fn();
+const hostFetchJsonMock = vi.fn();
 
-vi.mock('@/lib/tauriFetch', () => ({
-  tauriFetchJson: (...args: unknown[]) => tauriFetchJsonMock(...args),
+vi.mock('@/lib/hostFetch', () => ({
+  hostFetchJson: (...args: unknown[]) => hostFetchJsonMock(...args),
 }));
 
 const setSecureTokenMock = vi.fn().mockResolvedValue(undefined);
@@ -59,7 +59,7 @@ const resetStores = () => {
 
 describe('useCloudSyncStore', () => {
   beforeEach(() => {
-    tauriFetchJsonMock.mockReset();
+    hostFetchJsonMock.mockReset();
     setSecureTokenMock.mockReset().mockResolvedValue(undefined);
     getSecureTokenMock.mockReset().mockResolvedValue('mock-token');
     deleteSecureTokenMock.mockReset().mockResolvedValue(undefined);
@@ -67,7 +67,7 @@ describe('useCloudSyncStore', () => {
   });
 
   it('logs in and derives a workspace-bound webdav config', async () => {
-    tauriFetchJsonMock.mockResolvedValueOnce({
+    hostFetchJsonMock.mockResolvedValueOnce({
       ok: true,
       status: 200,
       data: {
@@ -111,7 +111,7 @@ describe('useCloudSyncStore', () => {
       authStatus: 'authenticated',
     });
 
-    tauriFetchJsonMock.mockResolvedValueOnce({
+    hostFetchJsonMock.mockResolvedValueOnce({
       ok: true,
       status: 200,
       data: { id: 'workspace-2', name: 'Team Notes' },
@@ -125,7 +125,7 @@ describe('useCloudSyncStore', () => {
   });
 
   it('login saves token to keychain', async () => {
-    tauriFetchJsonMock.mockResolvedValueOnce({
+    hostFetchJsonMock.mockResolvedValueOnce({
       ok: true,
       status: 200,
       data: {

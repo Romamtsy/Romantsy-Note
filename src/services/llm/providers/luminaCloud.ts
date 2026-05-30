@@ -25,6 +25,8 @@ export const LUMINA_CLOUD_BASE_URL = 'https://api.lumina-note.com/v1/ai';
 
 export const LUMINA_CLOUD_REQUIRED_FEATURE = 'cloud_ai';
 
+const ROMANTSY_CLOUD_ENABLED = import.meta.env.VITE_ROMANTSY_ENABLE_CLOUD === '1';
+
 export const LUMINA_CLOUD_PROVIDER: ProviderMeta = {
   id: LUMINA_CLOUD_PROVIDER_ID,
   label: 'Lumina Cloud',
@@ -50,6 +52,7 @@ export const LUMINA_CLOUD_PROVIDER: ProviderMeta = {
  * call site.
  */
 export function isLuminaCloudVisible(features: readonly string[] | null | undefined): boolean {
+  if (!ROMANTSY_CLOUD_ENABLED) return false;
   if (!features) return false;
   return features.includes(LUMINA_CLOUD_REQUIRED_FEATURE);
 }

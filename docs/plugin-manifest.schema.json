@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://lumina-note.dev/schemas/plugin-manifest.v1.json",
+  "$id": "https://romantsy-note.dev/schemas/plugin-manifest.v1.json",
   "title": "Lumina Plugin Manifest v1",
   "type": "object",
   "required": ["id", "name", "version", "entry"],

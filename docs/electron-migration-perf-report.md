@@ -64,7 +64,7 @@ Measure on a quiet machine:
 
 ```bash
 # After a signed build is produced
-hyperfine --warmup 1 --runs 5 "open -a 'Lumina Note.app'"
+hyperfine --warmup 1 --runs 5 "open -a 'Romantsy-Note.app'"
 ```
 
 Record the p50 / p95 here when v2.0.0 ships.

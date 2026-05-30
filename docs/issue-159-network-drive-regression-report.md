@@ -24,7 +24,7 @@ Refresh file tree failed (2)
 Invalid path: Path not permitted: Y:\\aaa\\bbb
 ```
 
-用户无法将位于以下位置的文件库添加到 Lumina-Note：
+用户无法将位于以下位置的文件库添加到 Romantsy-Note：
 - Windows: 网络映射驱动器（如 `Y:\`, `Z:\`）
 - macOS: `/Volumes/` 下挂载的网络驱动器或外部卷
 - Linux: `/mnt/` 或 `/media/` 下的网络挂载点
@@ -190,21 +190,21 @@ fn default_allowed_roots() -> Vec<PathBuf> {
 ```bash
 # 挂载网络驱动器后测试
 mount -t smbfs //user@server/share /Volumes/MyShare
-# 在 Lumina-Note 中打开 /Volumes/MyShare/vault
+# 在 Romantsy-Note 中打开 /Volumes/MyShare/vault
 ```
 
 **Windows**:
 ```powershell
 # 映射网络驱动器后测试
 net use Z: \\server\share
-# 在 Lumina-Note 中打开 Z:\vault
+# 在 Romantsy-Note 中打开 Z:\vault
 ```
 
 **Linux**:
 ```bash
 # 挂载网络共享后测试
 mount -t cifs //server/share /mnt/myshare
-# 在 Lumina-Note 中打开 /mnt/myshare/vault
+# 在 Romantsy-Note 中打开 /mnt/myshare/vault
 ```
 
 ### 5.2 自动化测试建议

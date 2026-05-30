@@ -2,11 +2,16 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useFileStore } from "@/stores/useFileStore";
 import { useLocaleStore } from "@/stores/useLocaleStore";
 import { useNoteIndexStore } from "@/stores/useNoteIndexStore";
+import { readFile, saveFile } from "@/lib/host";
 import { useShallow } from "zustand/react/shallow";
+import { toast } from "sonner";
 import {
   ZoomIn,
   ZoomOut,
   RefreshCw,
+  Plus,
+  Trash2,
+  X,
   FileText,
   Link as LinkIcon,
   MousePointer2,
@@ -172,6 +177,64 @@ interface HoverPreviewState {
   nodeId: string;
 }
 
+function normalizeWikiTarget(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function hasWikiLink(content: string, targetLabel: string): boolean {
+  const target = normalizeWikiTarget(targetLabel);
+  const regex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    if (normalizeWikiTarget(match[1]) === target) return true;
+  }
+  return false;
+}
+
+function appendWikiLink(content: string, targetLabel: string): string {
+  if (hasWikiLink(content, targetLabel)) return content;
+  const body = content.replace(/\s+$/g, "");
+  const separator = body.length > 0 ? "\n\n" : "";
+  return `${body}${separator}[[${targetLabel}]]\n`;
+}
+
+function removeWikiLink(content: string, targetLabel: string): string {
+  const target = normalizeWikiTarget(targetLabel);
+  const wikiLinkRegex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+  const nextLines: string[] = [];
+
+  for (const line of content.split("\n")) {
+    let removedFromLine = false;
+    const nextLine = line
+      .replace(wikiLinkRegex, (match, linkName) => {
+        if (normalizeWikiTarget(linkName) !== target) return match;
+        removedFromLine = true;
+        return "";
+      })
+      .replace(/[ \t]{2,}/g, " ")
+      .trimEnd();
+
+    if (removedFromLine && nextLine.trim() === "") continue;
+    nextLines.push(nextLine);
+  }
+
+  return nextLines.join("\n").replace(/\n{3,}/g, "\n\n");
+}
+
+function distanceToSegment(
+  point: { x: number; y: number },
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return Math.hypot(point.x - a.x, point.y - a.y);
+  const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / lenSq));
+  const projection = { x: a.x + t * dx, y: a.y + t * dy };
+  return Math.hypot(point.x - projection.x, point.y - projection.y);
+}
+
 export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -182,12 +245,29 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const emphasisRef = useRef<Map<string, number>>(new Map());
   const focusBlendRef = useRef(0);
 
-  const { vaultPath, currentFile, openFile, openIsolatedGraphTab } = useFileStore(
+  const {
+    vaultPath,
+    currentFile,
+    currentContent,
+    tabs,
+    activeTabIndex,
+    openFile,
+    openIsolatedGraphTab,
+    updateContent,
+    save,
+    reloadFileIfOpen,
+  } = useFileStore(
     useShallow((state) => ({
       vaultPath: state.vaultPath,
       currentFile: state.currentFile,
+      currentContent: state.currentContent,
+      tabs: state.tabs,
+      activeTabIndex: state.activeTabIndex,
       openFile: state.openFile,
       openIsolatedGraphTab: state.openIsolatedGraphTab,
+      updateContent: state.updateContent,
+      save: state.save,
+      reloadFileIfOpen: state.reloadFileIfOpen,
     }))
   );
   const {
@@ -196,6 +276,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
     totalNotes,
     indexedCount,
     truncated: indexTruncated,
+    buildIndex,
   } = useNoteIndexStore(
     useShallow((state) => ({
       noteIndex: state.noteIndex,
@@ -203,11 +284,15 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       totalNotes: state.totalNotes,
       indexedCount: state.indexedCount,
       truncated: state.truncated,
+      buildIndex: state.buildIndex,
     })),
   );
   const { t } = useLocaleStore();
 
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<GraphEdge | null>(null);
+  const [linkingFrom, setLinkingFrom] = useState<GraphNode | null>(null);
+  const [isEditingLink, setIsEditingLink] = useState(false);
   const [hoverNode, setHoverNode] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1.0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -243,6 +328,94 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const [nodeSize, setNodeSize] = useState(1.0);
   const [showLabels, setShowLabels] = useState(true);
   const [showFolders, setShowFolders] = useState(true); // 是否显示文件夹节点
+
+  const nodeById = useCallback((id: string) => {
+    return nodesRef.current.find((node) => node.id === id) ?? null;
+  }, []);
+
+  const getContentForLinkEdit = useCallback(
+    async (path: string) => {
+      const activeTab = activeTabIndex >= 0 ? tabs[activeTabIndex] : null;
+      if (currentFile === path && activeTab?.path === path) return currentContent;
+      const openTab = tabs.find((tab) => tab.type === "file" && tab.path === path);
+      if (openTab) return openTab.content;
+      return readFile(path);
+    },
+    [activeTabIndex, currentContent, currentFile, tabs],
+  );
+
+  const persistLinkEdit = useCallback(
+    async (path: string, nextContent: string, description: string) => {
+      const activeTab = activeTabIndex >= 0 ? tabs[activeTabIndex] : null;
+      if (currentFile === path && activeTab?.path === path) {
+        updateContent(nextContent, "user", description);
+        await save();
+      } else {
+        await saveFile(path, nextContent);
+        await reloadFileIfOpen(path, { skipIfDirty: false });
+      }
+      if (vaultPath) void buildIndex(vaultPath);
+    },
+    [
+      activeTabIndex,
+      buildIndex,
+      currentFile,
+      reloadFileIfOpen,
+      save,
+      tabs,
+      updateContent,
+      vaultPath,
+    ],
+  );
+
+  const createLink = useCallback(
+    async (source: GraphNode, target: GraphNode) => {
+      if (source.isFolder || target.isFolder || source.path === target.path) return;
+      setIsEditingLink(true);
+      try {
+        const content = await getContentForLinkEdit(source.path);
+        const nextContent = appendWikiLink(content, target.label);
+        if (nextContent === content) {
+          toast.info(`已存在连接：${source.label} -> ${target.label}`);
+          return;
+        }
+        await persistLinkEdit(source.path, nextContent, `Add graph link to ${target.label}`);
+        toast.success(`已连接：${source.label} -> ${target.label}`);
+      } catch (error) {
+        toast.error(`连接失败：${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        setIsEditingLink(false);
+        setLinkingFrom(null);
+      }
+    },
+    [getContentForLinkEdit, persistLinkEdit],
+  );
+
+  const deleteLink = useCallback(
+    async (edge: GraphEdge) => {
+      if (edge.type !== "link") return;
+      const source = nodeById(edge.source);
+      const target = nodeById(edge.target);
+      if (!source || !target || source.isFolder || target.isFolder) return;
+      setIsEditingLink(true);
+      try {
+        const content = await getContentForLinkEdit(source.path);
+        const nextContent = removeWikiLink(content, target.label);
+        if (nextContent === content) {
+          toast.info(`未找到连接：${source.label} -> ${target.label}`);
+          return;
+        }
+        await persistLinkEdit(source.path, nextContent, `Remove graph link to ${target.label}`);
+        setSelectedEdge(null);
+        toast.success(`已删除连接：${source.label} -> ${target.label}`);
+      } catch (error) {
+        toast.error(`删除连接失败：${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        setIsEditingLink(false);
+      }
+    },
+    [getContentForLinkEdit, nodeById, persistLinkEdit],
+  );
 
   const getNodeBaseRadius = useCallback((node: GraphNode) => {
     const baseRadius = node.isFolder
@@ -451,6 +624,10 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
       const isHierarchy = edge.type === 'hierarchy';
       const edgeEmphasis = Math.max(emphasis.get(u.id) ?? 0, emphasis.get(v.id) ?? 0);
+      const isSelectedEdge =
+        selectedEdge?.source === edge.source &&
+        selectedEdge?.target === edge.target &&
+        selectedEdge?.type === edge.type;
 
       // Tiered edge styling based on neighbor degree
       let effectiveAlpha: number;
@@ -459,6 +636,9 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
         // Focus ↔ first-degree: high highlight
         effectiveAlpha = 0.88;
         lineWidth = 2 / zoom;
+      } else if (isSelectedEdge) {
+        effectiveAlpha = 0.95;
+        lineWidth = 2.4 / zoom;
       } else if (edgeEmphasis > 0.2) {
         // First-degree ↔ second-degree: medium
         effectiveAlpha = 0.45;
@@ -480,6 +660,8 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
       ctx.strokeStyle = edgeEmphasis > 0.2
         ? (isHierarchy ? (u.color || "hsl(var(--primary))") : "hsl(var(--primary))")
+        : isSelectedEdge
+          ? "hsl(var(--destructive))"
         : isHierarchy
           ? (u.color || "hsl(var(--muted-foreground))")
           : "hsl(var(--muted-foreground))";
@@ -644,7 +826,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
     ctx.restore();
     animationRef.current = requestAnimationFrame(render);
-  }, [params, zoom, pan, hoverNode, selectedNode, currentFile, dimensions, getNodeBaseRadius, showLabels]);
+  }, [params, zoom, pan, hoverNode, selectedNode, selectedEdge, currentFile, dimensions, getNodeBaseRadius, showLabels]);
 
   useEffect(() => {
     animationRef.current = requestAnimationFrame(render);
@@ -693,11 +875,28 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       clickedNode.isDragging = true;
       setHoverPreview(null);
       setSelectedNode(clickedNode);
+      setSelectedEdge(null);
     } else {
+      const nodeMap = new Map(nodesRef.current.map((node) => [node.id, node]));
+      const clickedEdge = edgesRef.current.find((edge) => {
+        if (edge.type !== "link") return false;
+        const source = nodeMap.get(edge.source);
+        const target = nodeMap.get(edge.target);
+        if (!source || !target) return false;
+        return distanceToSegment(worldPos, source, target) <= 8 / zoom;
+      });
+      if (clickedEdge) {
+        setSelectedEdge(clickedEdge);
+        setSelectedNode(null);
+        clickedNodeRef.current = null;
+        return;
+      }
+
       isDraggingCanvas.current = true;
       clickedNodeRef.current = null;
       setHoverPreview(null);
       setSelectedNode(null);
+      setSelectedEdge(null);
     }
   };
 
@@ -747,6 +946,18 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const handleMouseUp = () => {
     // 如果点击了节点且没有拖拽，则打开笔记（文件夹节点不打开）
     if (clickedNodeRef.current && !hasDragged.current && !clickedNodeRef.current.isFolder) {
+      if (linkingFrom) {
+        void createLink(linkingFrom, clickedNodeRef.current);
+        const node = draggedNodeId.current
+          ? nodesRef.current.find((n) => n.id === draggedNodeId.current)
+          : null;
+        if (node) node.isDragging = false;
+        clickedNodeRef.current = null;
+        isDraggingNode.current = false;
+        isDraggingCanvas.current = false;
+        draggedNodeId.current = null;
+        return;
+      }
       openFile(clickedNodeRef.current.path, { preview: true });
     }
 
@@ -835,6 +1046,14 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       })
       .filter(Boolean) as GraphNode[];
   }, [selectedNode]);
+
+  const selectedEdgeNodes = useMemo(() => {
+    if (!selectedEdge) return null;
+    const source = nodesRef.current.find((node) => node.id === selectedEdge.source);
+    const target = nodesRef.current.find((node) => node.id === selectedEdge.target);
+    if (!source || !target) return null;
+    return { source, target };
+  }, [selectedEdge]);
 
   const hoverPreviewNode = hoverPreview
     ? nodesRef.current.find((node) => node.id === hoverPreview.nodeId) ?? null
@@ -1054,6 +1273,26 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
         {/* Canvas */}
         <div ref={containerRef} className="flex-1 relative bg-popover dark:bg-background overflow-hidden">
+          {linkingFrom && (
+            <div className="absolute top-3 left-3 z-20 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 text-xs shadow-elev-2">
+              <Plus size={13} className="text-primary" />
+              <span>
+                从 <span className="font-medium text-foreground">{linkingFrom.label}</span> 连接到...
+              </span>
+              <button
+                onClick={() => setLinkingFrom(null)}
+                className="ml-1 rounded p-0.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                title={t.common.cancel}
+              >
+                <X size={13} />
+              </button>
+            </div>
+          )}
+          {isEditingLink && (
+            <div className="absolute bottom-3 left-3 z-20 rounded-md border border-border bg-popover px-3 py-1.5 text-xs text-muted-foreground shadow-elev-2">
+              正在写入 Markdown 连接...
+            </div>
+          )}
           <canvas
             ref={canvasRef}
             width={dimensions.width}
@@ -1157,20 +1396,62 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
                 {t.knowledgeGraph.isolateView}
               </button>
               {!contextMenu.node.isFolder && (
-                <button
-                  onClick={() => {
-                    openFile(contextMenu.node.path, { preview: true });
-                    setContextMenu(null);
-                  }}
-                  className="w-full px-3 py-1.5 text-sm text-left hover:bg-accent flex items-center gap-2"
-                >
-                  <FileText className="w-4 h-4" />
-                  {t.knowledgeGraph.openNote}
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      setLinkingFrom(contextMenu.node);
+                      setSelectedNode(contextMenu.node);
+                      setSelectedEdge(null);
+                      setContextMenu(null);
+                    }}
+                    className="w-full px-3 py-1.5 text-sm text-left hover:bg-accent flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    从此笔记创建连接
+                  </button>
+                  <button
+                    onClick={() => {
+                      openFile(contextMenu.node.path, { preview: true });
+                      setContextMenu(null);
+                    }}
+                    className="w-full px-3 py-1.5 text-sm text-left hover:bg-accent flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    {t.knowledgeGraph.openNote}
+                  </button>
+                </>
               )}
             </div>
           )}
         </div>
+
+        {/* Edge details */}
+        {selectedEdge && selectedEdgeNodes && (
+          <div className="p-3 border-t border-border/60 bg-popover dark:bg-background space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground uppercase flex items-center gap-1">
+                  <LinkIcon size={10} />
+                  WikiLink 连接
+                </div>
+                <div className="mt-1 text-sm text-foreground truncate">
+                  {selectedEdgeNodes.source.label} {"->"} {selectedEdgeNodes.target.label}
+                </div>
+              </div>
+              <button
+                onClick={() => void deleteLink(selectedEdge)}
+                disabled={isEditingLink}
+                className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-ui-sm px-2 text-xs text-destructive transition-colors hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Trash2 size={13} />
+                删除连接
+              </button>
+            </div>
+            <div className="text-xs text-muted-foreground truncate">
+              将从 {selectedEdgeNodes.source.label} 中移除 [[{selectedEdgeNodes.target.label}]]
+            </div>
+          </div>
+        )}
 
         {/* Node details */}
         {selectedNode && (

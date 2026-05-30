@@ -118,10 +118,7 @@ export function buildKnowledgeGraphData(
       const target = noteByName.get(linkName.trim().toLowerCase());
       if (!target || target.path === note.path) continue;
 
-      const edgeKey =
-        note.path < target.path
-          ? `${note.path}\u0000${target.path}`
-          : `${target.path}\u0000${note.path}`;
+      const edgeKey = `${note.path}\u0000${target.path}`;
       if (linkEdgeSet.has(edgeKey)) continue;
 
       linkEdgeSet.add(edgeKey);

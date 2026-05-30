@@ -933,7 +933,7 @@ export function WelcomeScreen({ onOpenVault, onCreateVault }: WelcomeScreenProps
             >
               {/* Logo */}
               <motion.div variants={fadeUpVariants}>
-                <img src={logoUrl} alt="Lumina Note" className="w-20 h-20" />
+                <img src={logoUrl} alt="Romantsy-Note" className="w-20 h-20" />
               </motion.div>
 
               {/* Title */}
@@ -967,7 +967,7 @@ export function WelcomeScreen({ onOpenVault, onCreateVault }: WelcomeScreenProps
                 variants={fadeUpVariants}
                 className="flex items-center justify-between w-full mt-4 text-xs text-muted-foreground"
               >
-                <span>Lumina Note</span>
+                <span>Romantsy-Note</span>
               </motion.div>
             </motion.div>
           </div>
@@ -1024,7 +1024,7 @@ vi.mock("@/stores/useLocaleStore", () => ({
   useLocaleStore: () => ({
     t: {
       welcome: {
-        title: "Lumina Note",
+        title: "Romantsy-Note",
         openFolder: "Open Notes Folder",
         selectFolder: "Select a folder to continue",
       },
@@ -1052,7 +1052,7 @@ describe("WelcomeScreen", () => {
 
   it("renders the two-pane layout", () => {
     render(<WelcomeScreen onOpenVault={vi.fn()} />);
-    expect(screen.getByText("Lumina Note")).toBeInTheDocument();
+    expect(screen.getByText("Romantsy-Note")).toBeInTheDocument();
     expect(screen.getByText("Open Notes Folder")).toBeInTheDocument();
     expect(screen.getByText("No recent vaults")).toBeInTheDocument();
   });

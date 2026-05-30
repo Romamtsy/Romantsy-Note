@@ -49,7 +49,7 @@ git commit -m "chore: add keyring crate for OS-level secret storage"
 ```rust
 use tauri::command;
 
-const SERVICE_NAME: &str = "lumina-note";
+const SERVICE_NAME: &str = "romantsy-note";
 
 #[command]
 pub fn secure_store_get(key: String) -> Result<Option<String>, String> {

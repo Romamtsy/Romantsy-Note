@@ -34,14 +34,23 @@ import path from "node:path";
 // Electron's defaults closely enough that users won't see a surprising
 // location.
 function resolveLuminaBase(): string {
+  if (process.env.LUMINA_DATA_DIR) {
+    return process.env.LUMINA_DATA_DIR;
+  }
+
+  const userDirArg = process.argv.find((arg) => arg.startsWith("--user-data-dir="));
+  if (userDirArg) {
+    return userDirArg.split("=")[1];
+  }
+
   const home = os.homedir();
   switch (process.platform) {
     case "darwin":
-      return path.join(home, "Library", "Application Support", "lumina-note");
+      return path.join(home, "Library", "Application Support", "romantsy-note");
     case "win32":
-      return path.join(process.env.APPDATA ?? home, "lumina-note");
+      return path.join(process.env.APPDATA ?? home, "romantsy-note");
     default:
-      return path.join(home, ".config", "lumina-note");
+      return path.join(home, ".config", "romantsy-note");
   }
 }
 

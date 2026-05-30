@@ -15,6 +15,7 @@ export {
   invoke,
   isTauri,
   isTauriAvailable,
+  isHostBridgeAvailable,
   listen,
   getVersion,
   transformCallback,
@@ -22,7 +23,12 @@ export {
   Resource,
   SERIALIZE_TO_IPC_FN,
 } from "./hostBridge";
-export type { InvokeArgs, TauriInternals, UnlistenFn } from "./hostBridge";
+export type {
+  HostBridgeInternals,
+  InvokeArgs,
+  TauriInternals,
+  UnlistenFn,
+} from "./hostBridge";
 
 // ── File system helpers (formerly src/lib/tauri.ts) ───────────────────────
 

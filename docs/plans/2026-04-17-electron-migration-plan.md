@@ -1,4 +1,4 @@
-# Lumina Note v2：完全迁移到 Electron + TS Agent + LLM Wiki
+# Romantsy-Note v2：完全迁移到 Electron + TS Agent + LLM Wiki
 
 **日期**：2026-04-17
 **状态**：已对齐，待执行（替代 `2026-04-11-lumina-v2-electron-llm-wiki-plan.md`）
@@ -9,7 +9,7 @@
 
 ## 1. 产品定位
 
-Lumina Note 收敛为 **「LLM Agent + 文本笔记」** 场景的桌面应用：用户用它沉淀知识（丢文档、记录想法、提取想法），所有知识加工都交给 agent 完成。
+Romantsy-Note 收敛为 **「LLM Agent + 文本笔记」** 场景的桌面应用：用户用它沉淀知识（丢文档、记录想法、提取想法），所有知识加工都交给 agent 完成。
 
 - **不做 RAG / 向量检索**：agent 自己用 filesystem 工具浏览 vault 获取上下文
 - **BYOK 模式**：用户自带 API key，软件只是壳

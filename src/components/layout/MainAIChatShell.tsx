@@ -243,19 +243,72 @@ export function buildImageModeAgentPrompt(
   return [
     "Use the image-gen skill to generate an image.",
     provider
-      ? `The configured image provider available for this request is \`${provider.id}\` (${provider.marketingName}). Use only this provider. Do not switch to Google, Seedream, ByteDance, or any other provider unless Lumina explicitly lists it as configured.`
+      ? `The configured image provider available for this request is \`${provider.id}\` (${provider.marketingName}). Use only this provider. Do not switch to Google, Seedream, ByteDance, or any other provider unless Romantsy explicitly lists it as configured.`
       : null,
     "Keep provider routing separate from prompt interpretation: the language the user typed in is not by itself a reason to switch providers.",
     "Preserve explicit visual constraints from the user, including medium, region, era, genre, culture, composition, subject, mood, palette, and style descriptors. Do not replace a specific descriptor with a nearby default style unless the user asked for that.",
     "Handle visible text as its own requirement: if the user asks for readable text, preserve the requested text and language; if they do not ask for readable text, ask the image model to avoid readable text, letters, captions, labels, and speech bubbles.",
     ...visionInstructions,
     "Refine the user's prompt for visual clarity, infer the aspect ratio, use explicit/high-confidence vault reference images when useful, then call generate_image.",
-    "After generate_image returns, do not repeat the generated image as markdown in the chat reply. Lumina renders the generated image card automatically; mention the saved path in plain text only if helpful.",
+    "After generate_image returns, do not repeat the generated image as markdown in the chat reply. Romantsy renders the generated image card automatically; mention the saved path in plain text only if helpful.",
     "User prompt:",
     fullMessage,
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+type ProviderStatusCardInfo = {
+  tone: "ok" | "warn" | "error" | "loading";
+  title: string;
+  detail: string;
+};
+
+function getProviderStatusCard(input: {
+  provider?: string;
+  model?: string;
+  baseUrl?: string;
+  apiKeyConfigured?: boolean;
+  agentStatus: string;
+  agentError: string | null;
+}): ProviderStatusCardInfo {
+  const provider = input.provider || "未选择";
+  const model = input.model?.trim() || "未选择模型";
+  const needsKey = input.provider !== "ollama";
+
+  if (input.agentStatus === "error") {
+    return {
+      tone: "error",
+      title: "AI Provider 启动失败",
+      detail:
+        input.agentError ||
+        "请检查模型配置、API Key、网络代理或 opencode server 日志。",
+    };
+  }
+
+  if (input.agentStatus === "running" || input.agentStatus === "waiting_approval") {
+    return {
+      tone: "loading",
+      title: "AI Provider 运行中",
+      detail: `${provider} / ${model}`,
+    };
+  }
+
+  if (!input.provider || !input.model || (needsKey && !input.apiKeyConfigured)) {
+    return {
+      tone: "warn",
+      title: "AI Provider 未完成配置",
+      detail: "打开设置配置 Provider、模型和 API Key。Ollama 需要本地服务已启动。",
+    };
+  }
+
+  return {
+    tone: "ok",
+    title: "AI Provider 已配置",
+    detail: input.baseUrl
+      ? `${provider} / ${model} / ${input.baseUrl}`
+      : `${provider} / ${model}`,
+  };
 }
 
 export function MainAIChatShell() {
@@ -368,7 +421,7 @@ export function MainAIChatShell() {
   const {
     status: agentStatus,
     messages: rawAgentMessages,
-    error: _agentError,
+    error: agentError,
     startTask: startAgentTask,
     abort: agentAbort,
     pendingTool: pendingAgentPermission,
@@ -545,6 +598,27 @@ export function MainAIChatShell() {
       baseUrl: aiBaseUrl,
     });
   }, [aiProvider, aiApiKey, aiApiKeyConfigured, aiBaseUrl, aiCustomModelId, aiModel]);
+  const providerStatus = useMemo(
+    () =>
+      getProviderStatusCard({
+        provider: aiProvider,
+        model: aiModel === "custom" ? aiCustomModelId : aiModel,
+        baseUrl: aiBaseUrl,
+        apiKeyConfigured: aiApiKeyConfigured || Boolean(aiApiKey?.trim()),
+        agentStatus,
+        agentError,
+      }),
+    [
+      aiProvider,
+      aiModel,
+      aiCustomModelId,
+      aiBaseUrl,
+      aiApiKeyConfigured,
+      aiApiKey,
+      agentStatus,
+      agentError,
+    ],
+  );
   const agentVisionMode = useMemo(() => {
     return getAgentVisionModeForImageMode({
       provider: aiProvider,
@@ -1609,6 +1683,46 @@ export function MainAIChatShell() {
             currentFile={currentFile}
             fileTree={fileTree}
           />
+
+          {!hasStarted && (
+            <div className="mx-auto mt-4 w-full max-w-3xl px-4">
+              <div
+                className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm ${
+                  providerStatus.tone === "ok"
+                    ? "border-success/30 bg-success/10"
+                    : providerStatus.tone === "error"
+                      ? "border-destructive/30 bg-destructive/10"
+                      : providerStatus.tone === "loading"
+                        ? "border-primary/30 bg-primary/10"
+                        : "border-warning/30 bg-warning/10"
+                }`}
+              >
+                {providerStatus.tone === "ok" ? (
+                  <Check className="mt-0.5 h-4 w-4 text-success" />
+                ) : providerStatus.tone === "loading" ? (
+                  <Sparkles className="mt-0.5 h-4 w-4 animate-pulse text-primary" />
+                ) : (
+                  <AlertCircle className="mt-0.5 h-4 w-4 text-warning" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-foreground">
+                    {providerStatus.title}
+                  </div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {providerStatus.detail}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(true)}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border/70 bg-background/60 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+                >
+                  <Settings className="h-3.5 w-3.5" />
+                  设置
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Spacer: push input + cards toward center when idle.
            * Spacer A : Spacer B = 2:3 lands the input bar at ~40% from the

@@ -6050,7 +6050,7 @@ export const CodeMirrorEditor = forwardRef<
       }
     };
 
-    // 处理右键菜单格式化
+    // 处理右键菜单和工具栏格式化
     const onFormat = (e: any) => {
       const view = viewRef.current;
       if (!view || !e.detail?.format) return;
@@ -6059,29 +6059,33 @@ export const CodeMirrorEditor = forwardRef<
       const sel = view.state.selection.main;
       const selectedText = view.state.doc.sliceString(sel.from, sel.to);
 
-      if (!selectedText) return;
-
       let replacement = selectedText;
       let cursorOffset = 0;
 
       switch (format) {
         case "bold":
           replacement = `**${selectedText}**`;
+          if (!selectedText) cursorOffset = -2;
           break;
         case "italic":
           replacement = `*${selectedText}*`;
+          if (!selectedText) cursorOffset = -1;
           break;
         case "strikethrough":
           replacement = `~~${selectedText}~~`;
+          if (!selectedText) cursorOffset = -2;
           break;
         case "highlight":
           replacement = `==${selectedText}==`;
+          if (!selectedText) cursorOffset = -2;
           break;
         case "code":
           replacement = `\`${selectedText}\``;
+          if (!selectedText) cursorOffset = -1;
           break;
         case "wikilink":
           replacement = `[[${selectedText}]]`;
+          if (!selectedText) cursorOffset = -2;
           break;
         case "link":
           replacement = `[${selectedText}](url)`;
@@ -6089,45 +6093,41 @@ export const CodeMirrorEditor = forwardRef<
           break;
         case "ul":
           replacement = selectedText
-            .split("\n")
-            .map((line) => `- ${line}`)
-            .join("\n");
+            ? selectedText.split("\n").map((line) => `- ${line}`).join("\n")
+            : "- ";
           break;
         case "ol":
           replacement = selectedText
-            .split("\n")
-            .map((line, i) => `${i + 1}. ${line}`)
-            .join("\n");
+            ? selectedText.split("\n").map((line, i) => `${i + 1}. ${line}`).join("\n")
+            : "1. ";
           break;
         case "task":
           replacement = selectedText
-            .split("\n")
-            .map((line) => `- [ ] ${line}`)
-            .join("\n");
+            ? selectedText.split("\n").map((line) => `- [ ] ${line}`).join("\n")
+            : "- [ ] ";
           break;
         case "h1":
-          replacement = `# ${selectedText}`;
+          replacement = selectedText ? `# ${selectedText}` : "# ";
           break;
         case "h2":
-          replacement = `## ${selectedText}`;
+          replacement = selectedText ? `## ${selectedText}` : "## ";
           break;
         case "h3":
-          replacement = `### ${selectedText}`;
+          replacement = selectedText ? `### ${selectedText}` : "### ";
           break;
         case "h4":
-          replacement = `#### ${selectedText}`;
+          replacement = selectedText ? `#### ${selectedText}` : "#### ";
           break;
         case "h5":
-          replacement = `##### ${selectedText}`;
+          replacement = selectedText ? `##### ${selectedText}` : "##### ";
           break;
         case "h6":
-          replacement = `###### ${selectedText}`;
+          replacement = selectedText ? `###### ${selectedText}` : "###### ";
           break;
         case "quote":
           replacement = selectedText
-            .split("\n")
-            .map((line) => `> ${line}`)
-            .join("\n");
+            ? selectedText.split("\n").map((line) => `> ${line}`).join("\n")
+            : "> ";
           break;
         default:
           return;

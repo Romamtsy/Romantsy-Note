@@ -139,6 +139,7 @@ export function Sidebar({ onSwitchVault }: SidebarProps) {
   const { t } = useLocaleStore();
   const showMacTopChrome = useMacTopChromeEnabled();
   const leftSidebarMode = useUIStore((state) => state.leftSidebarMode);
+  const lastReadFilePath = useUIStore((state) => state.lastReadFilePath);
   const { isLoadingTree } = useFileStore(
     useShallow((state) => ({
       isLoadingTree: state.isLoadingTree,
@@ -549,6 +550,7 @@ export function Sidebar({ onSwitchVault }: SidebarProps) {
         onDrop={handleExternalDrop}
         rowProps={{
           currentFile,
+          lastReadFilePath,
           selectedPath,
           onSelect: handleSelect,
           onPermanentOpen: handlePermanentOpen,
@@ -850,6 +852,7 @@ function CreateInputRow({
 
 interface FileTreeRowProps {
   currentFile: string | null;
+  lastReadFilePath: string | null;
   selectedPath: string | null;
   onSelect: (entry: FileEntry) => void;
   onPermanentOpen: (entry: FileEntry) => void;
@@ -996,6 +999,7 @@ function LoadingFolderRow({ level, label }: { level: number; label: string }) {
 interface FileTreeItemProps {
   entry: FileEntry;
   currentFile: string | null;
+  lastReadFilePath: string | null;
   selectedPath: string | null;
   onSelect: (entry: FileEntry) => void;
   onPermanentOpen: (entry: FileEntry) => void;
@@ -1013,6 +1017,7 @@ interface FileTreeItemProps {
 function FileTreeItem({
   entry,
   currentFile,
+  lastReadFilePath,
   selectedPath,
   onSelect,
   onPermanentOpen,
@@ -1234,6 +1239,9 @@ function FileTreeItem({
     }
     return <File className={FILE_TREE_ICON_CLASS} />;
   };
+  const isLastRead =
+    !!lastReadFilePath &&
+    lastReadFilePath.replace(/\\/g, "/") === entry.path.replace(/\\/g, "/");
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
@@ -1266,7 +1274,14 @@ function FileTreeItem({
       style={{ paddingLeft: paddingLeft + 20 }}
     >
       <span className="pointer-events-none">{getFileIcon()}</span>
-      <span className={FILE_TREE_LABEL_CLASS}>{getFileName(entry.name)}</span>
+      <span className={cn(FILE_TREE_LABEL_CLASS, "min-w-0 flex-1")}>
+        {getFileName(entry.name)}
+      </span>
+      {isLastRead && (
+        <span className="ml-auto shrink-0 rounded-ui-sm bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+          上次阅读
+        </span>
+      )}
     </div>
   );
 }

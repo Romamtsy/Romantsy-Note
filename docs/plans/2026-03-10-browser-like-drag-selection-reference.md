@@ -110,7 +110,7 @@ Lumina 编辑器在“拖拽选择文本”这件事上，目标不是做一种�
 
 ### 4.1 核心实现
 
-- `/Users/zzzz/Lumina-Note/src/editor/CodeMirrorEditor.tsx`
+- `/Users/zzzz/Romantsy-Note/src/editor/CodeMirrorEditor.tsx`
   - 编辑器拖拽选择的核心逻辑
   - `mouseSelectingField`
   - 手动拖拽同步
@@ -120,20 +120,20 @@ Lumina 编辑器在“拖拽选择文本”这件事上，目标不是做一种�
 
 ### 4.2 选区工具栏
 
-- `/Users/zzzz/Lumina-Note/src/components/toolbar/SelectionToolbar.tsx`
+- `/Users/zzzz/Romantsy-Note/src/components/toolbar/SelectionToolbar.tsx`
   - 拖拽过程中工具栏是否会干扰选区命中、视觉判断或交互链路
   - 当前已有“拖拽时隐藏、mouseup 后恢复”的逻辑，需要确认是否与边缘滚动有耦合
 
 ### 4.3 拖拽问题历史记录
 
-- `/Users/zzzz/Lumina-Note/doc/tauri-drag-selection-fix-2026-03-06.md`
+- `/Users/zzzz/Romantsy-Note/doc/tauri-drag-selection-fix-2026-03-06.md`
   - 已记录 Tauri WebKit 下拖拽 ownership 竞争的根因
   - 任何新的实现都不应绕过这份文档描述的已知风险
   - 尤其要注意：不能只凭 DOM 模拟就宣布真实桌面端行为正确
 
 ### 4.4 WebKit e2e 回归测试
 
-- `/Users/zzzz/Lumina-Note/src/__tests__/codemirrorSelectAll.webkit.e2e.test.ts`
+- `/Users/zzzz/Romantsy-Note/src/__tests__/codemirrorSelectAll.webkit.e2e.test.ts`
   - 当前最适合扩展“拖拽到边缘时是否滚动”的回归验证位置
   - 适合验证：
     - 拖拽期间是否继续滚动
@@ -142,25 +142,25 @@ Lumina 编辑器在“拖拽选择文本”这件事上，目标不是做一种�
 
 ### 4.5 拖拽同步与状态测试
 
-- `/Users/zzzz/Lumina-Note/src/editor/CodeMirrorEditor.dragSelectionSync.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/editor/CodeMirrorEditor.dragSelectionSync.test.tsx`
   - 用于验证手动拖拽同步逻辑本身是否稳定
 
-- `/Users/zzzz/Lumina-Note/src/editor/CodeMirrorEditor.dragSelectionState.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/editor/CodeMirrorEditor.dragSelectionState.test.tsx`
   - 用于验证拖拽时的 class 和状态切换是否正确
 
-- `/Users/zzzz/Lumina-Note/src/editor/CodeMirrorEditor.selectionRendering.test.tsx`
+- `/Users/zzzz/Romantsy-Note/src/editor/CodeMirrorEditor.selectionRendering.test.tsx`
   - 用于验证在 Tauri WebKit 路径下拖拽期间的可视选区表现
 
 ### 4.6 E2E 夹具页面
 
-- `/Users/zzzz/Lumina-Note/src/e2e/selectAll.tsx`
-- `/Users/zzzz/Lumina-Note/e2e/select-all.html`
+- `/Users/zzzz/Romantsy-Note/src/e2e/selectAll.tsx`
+- `/Users/zzzz/Romantsy-Note/e2e/select-all.html`
   - 这是当前拖拽回归测试使用的最小复现环境
   - 后续如果要调查边缘滚动问题，优先在这里做最小可复现
 
 ### 4.7 宿主模式切换
 
-- `/Users/zzzz/Lumina-Note/src/editor/Editor.tsx`
+- `/Users/zzzz/Romantsy-Note/src/editor/Editor.tsx`
   - 负责将用户切换到 `reading / live / source` 模式
   - 如果最终发现不同模式的滚动容器或事件绑定层级不同，这里需要一并核对
 

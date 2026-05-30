@@ -1,23 +1,23 @@
 <div align="center">
 
-<img src="build-resources/icon.png" alt="Lumina Note Logo" width="120" height="120" />
+<img src="build-resources/icon.png" alt="Romantsy-Note Logo" width="120" height="120" />
 
-# Lumina Note
+# Romantsy-Note
 
 **ローカルファーストの AI ノートアプリ**
 
 ノートはデバイス上に保持したまま、AI を使って知識の記述、接続、検索、整理を進められるワークスペースです。
 
-[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org/)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/ci.yml)
-[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/security-audit.yml)
-[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Lumina-Note/total?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
-[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/stargazers)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/ci.yml)
+[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/security-audit.yml)
+[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Romantsy-Note/total?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
+[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/stargazers)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
 
 **言語**: [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · 日本語 · [한국어](./README.ko.md) · [Español](./README.es.md) · [Français](./README.fr.md) · [Deutsch](./README.de.md) · [Italiano](./README.it.md) · [Português (Brasil)](./README.pt-BR.md) · [Русский](./README.ru.md)
@@ -26,7 +26,7 @@
 
 ---
 
-<h2 align="center">Lumina Note の特長</h2>
+<h2 align="center">Romantsy-Note の特長</h2>
 
 - **ローカルファースト設計**: Vault はローカル管理で、モデルに送る内容を自分で選べます。
 - **知識作業をひとつに統合**: Markdown 編集、WikiLinks、グラフ表示、AI エージェントが一体で動作します。
@@ -38,7 +38,7 @@
 
 <div align="center">
 
-最新版は [Releases](https://github.com/blueberrycongee/Lumina-Note/releases) から取得できます。
+最新版は [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases) から取得できます。
 
 | プラットフォーム | パッケージ |
 |------------------|------------|
@@ -105,7 +105,7 @@
 
 <h2 align="center">クイックスタート</h2>
 
-1. Releases から Lumina Note をインストール
+1. Releases から Romantsy-Note をインストール
 2. 初回起動時にローカルフォルダを Vault として選択
 3. AI パネルでモデルプロバイダと API Key を設定し、必要に応じてお好みのモデルを選択
 4. 最初のノートを作成し、`[[WikiLinks]]` でつなげる
@@ -135,8 +135,8 @@
 - 
 
 ```bash
-git clone https://github.com/blueberrycongee/Lumina-Note.git
-cd Lumina-Note
+git clone https://github.com/blueberrycongee/Romantsy-Note.git
+cd Romantsy-Note
 npm install
 npm run dev
 ```
@@ -161,8 +161,8 @@ npm run dev
 
 <h2 align="center">コントリビューター</h2>
 
-<a href="https://github.com/blueberrycongee/Lumina-Note/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=blueberrycongee/Lumina-Note" />
+<a href="https://github.com/blueberrycongee/Romantsy-Note/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=blueberrycongee/Romantsy-Note" />
 </a>
 
 ---
@@ -175,4 +175,4 @@ npm run dev
 
 <h2 align="center">Star History</h2>
 
-[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Lumina-Note&type=Date)](https://star-history.com/#blueberrycongee/Lumina-Note&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Romantsy-Note&type=Date)](https://star-history.com/#blueberrycongee/Romantsy-Note&Date)

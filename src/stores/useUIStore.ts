@@ -61,6 +61,10 @@ interface UIState {
   editorMode: EditorMode;
   setEditorMode: (mode: EditorMode) => void;
 
+  // Reading continuity
+  lastReadFilePath: string | null;
+  setLastReadFilePath: (path: string | null) => void;
+
   // Block editor (handles, +button, block menu, drag-reorder)
   blockEditorEnabled: boolean;
   setBlockEditorEnabled: (enabled: boolean) => void;
@@ -117,6 +121,7 @@ const partializeUIState = (state: UIState) => ({
   aiPanelMode: state.aiPanelMode,
   mainView: state.mainView,
   editorMode: state.editorMode,
+  lastReadFilePath: state.lastReadFilePath,
   blockEditorEnabled: state.blockEditorEnabled,
   slashCommandsEnabled: state.slashCommandsEnabled,
   splitView: state.splitView,
@@ -206,6 +211,8 @@ export const useUIStore = create<UIState>()(
       // Editor mode - default to live preview
       editorMode: "live",
       setEditorMode: (mode) => set({ editorMode: mode }),
+      lastReadFilePath: null,
+      setLastReadFilePath: (path) => set({ lastReadFilePath: path }),
 
       // Block editor — default off; user opts in via Settings
       blockEditorEnabled: false,

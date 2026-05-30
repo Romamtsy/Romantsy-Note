@@ -12,7 +12,7 @@ The user is a tool-user, not a media consumer. They are fluent in Notion, Obsidi
 
 ## Product Purpose
 
-Lumina Note is a **local-first AI notebook**. The vault lives on disk in plain markdown. AI agents can read, edit, plan, and link inside it — but the user owns the file system, the data, and the model choice (Anthropic, OpenAI, DeepSeek, Gemini, Moonshot, Groq, OpenRouter, Ollama, etc.).
+Romantsy-Note is a **local-first AI notebook**. The vault lives on disk in plain markdown. AI agents can read, edit, plan, and link inside it — but the user owns the file system, the data, and the model choice (Anthropic, OpenAI, DeepSeek, Gemini, Moonshot, Groq, OpenRouter, Ollama, etc.).
 
 Success is invisible: the user opens the app, writes or thinks, and the tool gets out of the way. The AI surfaces (chat, agent run, skill picker, mention) feel like part of the editor, not a separate product bolted on.
 

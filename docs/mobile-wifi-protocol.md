@@ -1,6 +1,6 @@
 # Mobile Wi-Fi Protocol (MVP)
 
-This doc defines the LAN-only mobile pairing and command protocol used by Lumina Note.
+This doc defines the LAN-only mobile pairing and command protocol used by Romantsy-Note.
 
 ## Goals
 - Pair a phone on the same Wi-Fi network.

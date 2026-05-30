@@ -5,7 +5,7 @@
 
 ## Goal
 
-Allow authenticated users to publish their note vault as a static website hosted on the Lumina-Note server, accessible via a public URL.
+Allow authenticated users to publish their note vault as a static website hosted on the Romantsy-Note server, accessible via a public URL.
 
 ## Architecture Overview
 

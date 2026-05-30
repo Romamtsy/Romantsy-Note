@@ -60,6 +60,8 @@ interface NoteIndexState {
   indexedCount: number;
   /** True when the walker hit the path cap and stopped early. */
   truncated: boolean;
+  /** Files skipped during the last build because they could not be read. */
+  failedFiles: Array<{ path: string; reason: string }>;
 
   buildIndex: (vaultPath: string) => Promise<void>;
   cancelIndex: () => void;
@@ -136,6 +138,7 @@ export const useNoteIndexStore = create<NoteIndexState>((set, get) => ({
   totalNotes: 0,
   indexedCount: 0,
   truncated: false,
+  failedFiles: [],
 
   cancelIndex: () => {
     currentBuild?.abort.abort();
@@ -156,6 +159,7 @@ export const useNoteIndexStore = create<NoteIndexState>((set, get) => ({
       totalNotes: 0,
       indexedCount: 0,
       truncated: false,
+      failedFiles: [],
     });
 
     // Step 1: defer the build off the critical path. The vault has just
@@ -188,6 +192,7 @@ export const useNoteIndexStore = create<NoteIndexState>((set, get) => ({
     const noteIndex = new Map<string, NoteIndex>();
     const backlinksMap = new Map<string, Backlink[]>();
     const tagsMap = new Map<string, { count: number; files: string[] }>();
+    const failedFiles: Array<{ path: string; reason: string }> = [];
 
     let processed = 0;
 
@@ -255,6 +260,9 @@ export const useNoteIndexStore = create<NoteIndexState>((set, get) => ({
           }
         }
       } catch (error) {
+        const reason =
+          error instanceof Error ? error.message : String(error ?? "unknown");
+        failedFiles.push({ path: file.path, reason });
         // Silently skip unreadable files — they shouldn't block the
         // overall index and the user sees them in the sidebar anyway.
         if (import.meta.env.DEV) {
@@ -295,6 +303,7 @@ export const useNoteIndexStore = create<NoteIndexState>((set, get) => ({
       isIndexing: false,
       lastIndexTime: Date.now(),
       indexedCount: processed,
+      failedFiles,
     });
 
     if (currentBuild?.abort === abort) currentBuild = null;

@@ -1,4 +1,4 @@
-# Lumina-Note 代码异味报告复审（反向检查）
+# Romantsy-Note 代码异味报告复审（反向检查）
 
 - 复审对象: `doc/code-smell-report-2026-03-06.md`
 - 复审时间: 2026-03-06

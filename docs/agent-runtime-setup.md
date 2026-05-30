@@ -43,7 +43,7 @@ No bundle → `npm run dev` fails at the main-process build step with a
 4. **Build the Node bundle** (rerun whenever you bump opencode):
 
    ```bash
-   cd ~/Lumina-Note   # back to repo root
+   cd ~/Romantsy-Note   # back to repo root
    npm run opencode:bundle
    ```
 

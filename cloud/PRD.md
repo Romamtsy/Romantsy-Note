@@ -1,9 +1,9 @@
-# Lumina Note · Cloud Integration — PRD
+# Romantsy-Note · Cloud Integration — PRD
 
 **Status:** Draft v0.1 · 2026-04-28
 **Owner:** blueberrycongee
 **Sibling repo:** [`blueberrycongee/lumina-cloud`](https://github.com/blueberrycongee/lumina-cloud) (private, closed-source)
-**Scope of this doc:** the work that must happen **inside the open-source `Lumina-Note` repo** to enable commercialization via `lumina-cloud`. The commercial backend itself is specified in the sibling repo.
+**Scope of this doc:** the work that must happen **inside the open-source `Romantsy-Note` repo** to enable commercialization via `lumina-cloud`. The commercial backend itself is specified in the sibling repo.
 
 > This document is **separate from `PRODUCT.md`**. `PRODUCT.md` is the brand / product positioning of the app overall. This file is the **commercialization initiative spec**: what this repo needs to ship in order for paying customers to exist.
 
@@ -11,7 +11,7 @@
 
 ## 1. Purpose
 
-Make the open-source Lumina Note client capable of:
+Make the open-source Romantsy-Note client capable of:
 
 1. Accepting a **license** (typed in by the user, stored in OS keychain).
 2. Verifying the license **offline** using a bundled public key.
@@ -40,7 +40,7 @@ All without breaking the existing self-host, BYO-API-key, or fully-offline exper
 src/
 ├── services/
 │   ├── luminaCloud/         ← NEW. All cloud-related client code lives here.
-│   │   ├── client.ts        HTTP client to api.lumina-note.com
+│   │   ├── client.ts        HTTP client to api.romantsy-note.com
 │   │   ├── PUBLIC_KEY.ts    Hardcoded Ed25519 public key
 │   │   ├── verify.ts        Offline license verification
 │   │   ├── store.ts         License storage in OS keychain (electron safeStorage)
@@ -98,7 +98,7 @@ src/
 
 - **Where does the license entry UI live?** Most natural: under existing AI Settings modal as a new section, or as a new top-level "Account" tab. Defaulting to a new "Account" tab to avoid bloating AI Settings; revisit if users miss it.
 - **OS keychain availability.** Electron `safeStorage` is available on macOS & Windows, soft-fallback on Linux to a file with restrictive perms (clearly documented).
-- **Network failures.** All cloud requests must degrade gracefully — local providers must remain usable when `api.lumina-note.com` is unreachable.
+- **Network failures.** All cloud requests must degrade gracefully — local providers must remain usable when `api.romantsy-note.com` is unreachable.
 - **Mobile companion apps** under `mobile/` will eventually need their own license flow. **Out of P1 scope** but the contract here is designed so it ports cleanly.
 
 ---
@@ -107,7 +107,7 @@ src/
 
 P1 is done when:
 
-- A user can paste a license, see it verified, and successfully run an AI chat against `Lumina Cloud` at `https://api.lumina-note.com`.
+- A user can paste a license, see it verified, and successfully run an AI chat against `Lumina Cloud` at `https://api.romantsy-note.com`.
 - Removing the license fully reverses the integration with no leaked state.
 - All new code is covered by unit tests (≥ 80% line coverage in `src/services/luminaCloud/`).
 - E2E test exists that exercises license entry → cloud chat → usage display.

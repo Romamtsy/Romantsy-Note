@@ -25,7 +25,7 @@ describe("MacTopChrome", () => {
   });
 
   it("renders nothing outside macOS tauri", async () => {
-    const { container } = render(<MacTopChrome title="Lumina Note" />);
+    const { container } = render(<MacTopChrome title="Romantsy-Note" />);
 
     await waitFor(() => {
       expect(tauriMocks.platform).not.toHaveBeenCalled();

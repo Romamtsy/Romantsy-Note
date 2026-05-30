@@ -1,14 +1,14 @@
 /**
- * Low-level IPC bridge. Exposes `invoke`, `listen`, `Channel`, `Resource`,
- * `transformCallback`, and `isTauri` to `src/lib/host.ts`, which re-exports
- * them to the rest of the renderer.
+ * Low-level Electron host bridge. Exposes `invoke`, `listen`, `Channel`,
+ * `Resource`, `transformCallback`, and availability checks to
+ * `src/lib/host.ts`, which re-exports them to the rest of the renderer.
  */
 
 export const SERIALIZE_TO_IPC_FN = "__TAURI_TO_IPC_KEY__";
 
 export type InvokeArgs = Record<string, unknown>;
 
-export type TauriInternals = {
+export type HostBridgeInternals = {
   invoke?: <T = unknown>(
     cmd: string,
     args?: Record<string, unknown>,
@@ -26,15 +26,19 @@ export type TauriInternals = {
 
 declare global {
   interface Window {
-    __TAURI_INTERNALS__?: TauriInternals;
+    __HOST_INTERNALS__?: HostBridgeInternals;
+    /** @deprecated legacy Electron migration bridge name */
+    __TAURI_INTERNALS__?: HostBridgeInternals;
+    /** @deprecated legacy Electron migration bridge name */
     __TAURI__?: {
-      core?: { invoke?: TauriInternals["invoke"] };
+      core?: { invoke?: HostBridgeInternals["invoke"] };
     };
   }
 }
 
-function getInternals(): TauriInternals | undefined {
-  return typeof window !== "undefined" ? window.__TAURI_INTERNALS__ : undefined;
+function getInternals(): HostBridgeInternals | undefined {
+  if (typeof window === "undefined") return undefined;
+  return window.__HOST_INTERNALS__ ?? window.__TAURI_INTERNALS__;
 }
 
 function getInvoke() {
@@ -47,12 +51,17 @@ function getInvoke() {
   return fn;
 }
 
-export function isTauri(): boolean {
+export function isHostBridgeAvailable(): boolean {
   if (typeof window === "undefined") return false;
   return (
     typeof getInternals()?.invoke === "function" ||
     typeof window.__TAURI__?.core?.invoke === "function"
   );
+}
+
+/** @deprecated Use isHostBridgeAvailable. */
+export function isTauri(): boolean {
+  return isHostBridgeAvailable();
 }
 
 export async function invoke<T = unknown>(
@@ -142,4 +151,5 @@ export async function getVersion(): Promise<string> {
   return invoke<string>("get_version");
 }
 
-export const isTauriAvailable = isTauri;
+export const isTauriAvailable = isHostBridgeAvailable;
+export type TauriInternals = HostBridgeInternals;

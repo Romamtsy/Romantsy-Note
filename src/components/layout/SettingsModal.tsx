@@ -14,8 +14,6 @@ import { WebDAVSettings } from "../settings/WebDAVSettings";
 import { MobileGatewaySection } from "../settings/MobileGatewaySection";
 import { MobileOptionsSection } from "../settings/MobileOptionsSection";
 import { ProxySection } from "../settings/ProxySection";
-import { LicenseSettings } from "../settings/LicenseSettings";
-import { CloudUsagePanel } from "../settings/CloudUsagePanel";
 import { MODAL_SIZES } from "./modalSizes";
 
 type TabId = "general" | "ai" | "sync" | "network" | "account" | "system";
@@ -34,7 +32,6 @@ const TAB_ORDER: TabId[] = [
   "ai",
   "sync",
   "network",
-  "account",
   "system",
 ];
 
@@ -77,12 +74,7 @@ export function SettingsModal({
           </>
         );
       case "account":
-        return (
-          <>
-            <LicenseSettings />
-            <CloudUsagePanel />
-          </>
-        );
+        return null;
       case "system":
         return <SystemSection onOpenUpdateModal={onOpenUpdateModal} />;
     }

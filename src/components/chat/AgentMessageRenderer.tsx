@@ -1217,7 +1217,7 @@ export function cleanUserMessage(content: string): string {
       "",
     )
     .replace(
-      /^Use the image-gen skill to generate an image\.\n(?:The configured image provider available for this request is `[^`]+` \([^)]+\)\. Use only this provider\. Do not switch to Google, Seedream, ByteDance, or any other provider unless Lumina explicitly lists it as configured\.\n)?A Chinese-language prompt does not mean the image must render Chinese text\. Only choose a text-rendering-specialized provider if that provider is configured\.\nRefine the user's prompt for visual clarity, infer the aspect ratio, use relevant vault reference images when useful, then call generate_image\.\nUser prompt:\n/,
+      /^Use the image-gen skill to generate an image\.\n(?:The configured image provider available for this request is `[^`]+` \([^)]+\)\. Use only this provider\. Do not switch to Google, Seedream, ByteDance, or any other provider unless Romantsy explicitly lists it as configured\.\n)?A Chinese-language prompt does not mean the image must render Chinese text\. Only choose a text-rendering-specialized provider if that provider is configured\.\nRefine the user's prompt for visual clarity, infer the aspect ratio, use relevant vault reference images when useful, then call generate_image\.\nUser prompt:\n/,
       "",
     )
     .replace(

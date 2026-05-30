@@ -6,7 +6,12 @@
 
 import { Minus, Square, X, Copy } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
-import { isTauri, getCurrentWindow, platform, type Window } from "@/lib/host";
+import {
+  getCurrentWindow,
+  isHostBridgeAvailable,
+  platform,
+  type Window,
+} from "@/lib/host";
 import { resolveRendererAssetUrl } from "@/lib/appAsset";
 import { useLocaleStore } from "@/stores/useLocaleStore";
 
@@ -15,28 +20,28 @@ const isMacByNavigator = (): boolean =>
 
 export function TitleBar() {
   const { t } = useLocaleStore();
-  const tauriRuntime = isTauri();
-  const logoUrl = resolveRendererAssetUrl("lumina.png");
+  const hostBridgeAvailable = isHostBridgeAvailable();
+  const logoUrl = resolveRendererAssetUrl("romantsy.png");
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMac, setIsMac] = useState(() => isMacByNavigator());
-  const usesNativeMacTitleBar = tauriRuntime && isMac;
+  const usesNativeMacTitleBar = hostBridgeAvailable && isMac;
 
   const getWindowSafe = useCallback((): Window | null => {
-    if (!tauriRuntime) return null;
+    if (!hostBridgeAvailable) return null;
     try {
       return getCurrentWindow();
     } catch (e) {
       console.warn("Failed to access current window:", e);
       return null;
     }
-  }, [tauriRuntime]);
+  }, [hostBridgeAvailable]);
 
   useEffect(() => {
     let disposed = false;
     let unlistenFn: (() => void) | null = null;
 
     const checkPlatform = async () => {
-      if (!tauriRuntime) {
+      if (!hostBridgeAvailable) {
         setIsMac(isMacByNavigator());
         return;
       }
@@ -87,7 +92,7 @@ export function TitleBar() {
       disposed = true;
       unlistenFn?.();
     };
-  }, [getWindowSafe, tauriRuntime]);
+  }, [getWindowSafe, hostBridgeAvailable]);
 
   const withWindow = useCallback(
     async (
@@ -157,7 +162,7 @@ export function TitleBar() {
         {/* 中间：应用标题 */}
         <div className="flex-1 flex items-center justify-center">
           <span className="text-ui-caption text-muted-foreground font-medium pointer-events-none">
-            Lumina Note
+            Romantsy-Note
           </span>
         </div>
         <div
@@ -186,7 +191,7 @@ export function TitleBar() {
           className="w-4 h-4 pointer-events-none"
         />
         <span className="text-ui-caption text-muted-foreground font-medium pointer-events-none">
-          Lumina Note
+          Romantsy-Note
         </span>
       </div>
 

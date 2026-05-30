@@ -97,3 +97,5 @@ scripts/plan-loop*.ps1
 output/playwright/
 .playwright-mcp/
 .tmp_obsidian_re/
+
+.lumina-data/

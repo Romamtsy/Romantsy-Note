@@ -13,8 +13,8 @@
 ### Task 1: Compact `MacTopChrome`
 
 **Files:**
-- Modify: `/Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.tsx`
-- Test: `/Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.test.tsx`
+- Modify: `/Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.tsx`
+- Test: `/Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.test.tsx`
 
 **Step 1: Write the failing test**
 - Add a test that renders `MacTopChrome` on macOS with a subtitle and asserts the component stays single-line: subtitle is not rendered and the header has compact height classes.
@@ -36,5 +36,5 @@
 - Expected: PASS
 
 **Step 6: Commit**
-- `git add /Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.tsx /Users/zzzz/Lumina-Note/src/components/layout/MacTopChrome.test.tsx /Users/zzzz/Lumina-Note/docs/plans/2026-03-09-compact-mac-top-chrome.md`
+- `git add /Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.tsx /Users/zzzz/Romantsy-Note/src/components/layout/MacTopChrome.test.tsx /Users/zzzz/Romantsy-Note/docs/plans/2026-03-09-compact-mac-top-chrome.md`
 - `git commit -m "style(macos): compact top chrome"`

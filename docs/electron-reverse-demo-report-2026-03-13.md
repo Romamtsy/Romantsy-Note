@@ -2,7 +2,7 @@
 
 日期：2026-03-13  
 样本路径：`/Applications/electron 可供逆向版本.app`  
-恢复目录：`/Users/blueberrycongee/Lumina-Note/tmp/electron-reverse-demo/recovered`
+恢复目录：`/Users/blueberrycongee/Romantsy-Note/tmp/electron-reverse-demo/recovered`
 
 ## 1. 结论摘要
 

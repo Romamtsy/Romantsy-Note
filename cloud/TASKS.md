@@ -1,4 +1,4 @@
-# Lumina-Note · Cloud Integration — Backlog
+# Romantsy-Note · Cloud Integration — Backlog
 
 **Source of truth for the loop agent working in this repo.** Pick the first `[ ]` task. Do it. Mark `[x]` with a one-line note. Commit. Stop. Wait for next loop tick.
 
@@ -61,7 +61,7 @@
   - `getUsage(license)` → `§2.4` shape.
   - `getRevocations(since?)` → `§2.5` shape.
   - All errors mapped from `CONTRACT.md §6` to a typed `LuminaCloudError` class.
-  - Base URL configurable via env (default `https://api.lumina-note.com`).
+  - Base URL configurable via env (default `https://api.romantsy-note.com`).
   - Tests use `msw` or fetch mock.
 - **Dep:** add `msw` to `devDependencies` if not present, or use a simple manual fetch mock.
 
@@ -73,7 +73,7 @@
   - Tests: cold cache, warm cache, expired cache, network failure with stale cache.
 
 ### C7 — "Lumina Cloud" as 12th LLM provider
-- [x] **Goal:** `src/services/llm/providers/luminaCloud.ts` registers a provider that reuses the existing `@ai-sdk/openai-compatible` plumbing with `baseURL = api.lumina-note.com/v1/ai` and `apiKey = <license>`.
+- [x] **Goal:** `src/services/llm/providers/luminaCloud.ts` registers a provider that reuses the existing `@ai-sdk/openai-compatible` plumbing with `baseURL = api.romantsy-note.com/v1/ai` and `apiKey = <license>`.
 - **Files:**
   - New: `src/services/llm/providers/luminaCloud.ts`, test.
   - Edit (minimal, additive only): the existing provider registry — open `src/services/llm/providers/` and follow the pattern of the smallest existing provider. If the registry pattern requires non-trivial edits, append `**[BLOCKED: registry pattern unclear — Lead, please specify]**` and stop.
@@ -117,7 +117,7 @@
 
 ### C13 — README mention (subtle, not pushy)
 - [x] **Goal:** Add a small "Optional: Lumina Cloud (paid)" subsection under the Features section in `README.en.md` and `README.zh-CN.md` only.
-- **Tone:** Match the existing brand voice (quiet, precise — see `PRODUCT.md` §3). One paragraph max. Link to the marketing site (placeholder URL `https://lumina-note.com` for now).
+- **Tone:** Match the existing brand voice (quiet, precise — see `PRODUCT.md` §3). One paragraph max. Link to the marketing site (placeholder URL `https://romantsy-note.com` for now).
 - **Acceptance:** Diff is ≤ 15 lines per file.
 
 ---

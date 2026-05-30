@@ -54,10 +54,10 @@ describe('isLuminaCloudVisible', () => {
     expect(isLuminaCloudVisible(['lifetime'])).toBe(false);
   });
 
-  it('shows the provider when the license includes cloud_ai', () => {
-    expect(isLuminaCloudVisible(['cloud_ai'])).toBe(true);
-    expect(isLuminaCloudVisible(['cloud_ai', 'sync'])).toBe(true);
-    expect(isLuminaCloudVisible(['lifetime', 'cloud_ai', 'sync'])).toBe(true);
+  it('keeps the provider hidden in Romantsy builds unless cloud is explicitly enabled', () => {
+    expect(isLuminaCloudVisible(['cloud_ai'])).toBe(false);
+    expect(isLuminaCloudVisible(['cloud_ai', 'sync'])).toBe(false);
+    expect(isLuminaCloudVisible(['lifetime', 'cloud_ai', 'sync'])).toBe(false);
   });
 });
 

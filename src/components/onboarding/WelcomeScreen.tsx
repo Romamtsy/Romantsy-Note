@@ -5,7 +5,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { FolderOpen, FolderPlus, ArrowLeft } from "lucide-react";
+import { FolderOpen, FolderPlus, ArrowLeft, Sparkles } from "lucide-react";
 import { openDialog } from "@/lib/host";
 import { TitleBar } from "@/components/layout/TitleBar";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
@@ -21,6 +21,7 @@ import { useLocaleStore } from "@/stores/useLocaleStore";
 interface WelcomeScreenProps {
   onOpenVault: (path?: string) => void;
   onCreateVault?: (name: string) => void;
+  onCreateDemoVault?: () => void;
 }
 
 const containerVariants: Variants = {
@@ -46,11 +47,12 @@ const viewVariants = {
 export function WelcomeScreen({
   onOpenVault,
   onCreateVault,
+  onCreateDemoVault,
 }: WelcomeScreenProps) {
   const { t } = useLocaleStore();
   const showMacWindowInset = useMacTopChromeEnabled();
   const prefersReducedMotion = useReducedMotion();
-  const logoUrl = resolveRendererAssetUrl("lumina.png");
+  const logoUrl = resolveRendererAssetUrl("romantsy.png");
 
   const vaults = useRecentVaultStore((s) => s.vaults);
   const removeVault = useRecentVaultStore((s) => s.removeVault);
@@ -150,7 +152,7 @@ export function WelcomeScreen({
                   <motion.div variants={fadeUpVariants}>
                     <img
                       src={logoUrl}
-                      alt="Lumina Note"
+                      alt="Romantsy-Note"
                       className="w-20 h-20"
                     />
                   </motion.div>
@@ -187,6 +189,18 @@ export function WelcomeScreen({
                           label: t.welcome.newVaultButton,
                           variant: "secondary",
                           onClick: handleShowCreate,
+                        }}
+                      />
+                    )}
+                    {onCreateDemoVault && (
+                      <ActionCard
+                        icon={Sparkles}
+                        title="生成演示笔记库"
+                        description="一键创建包含复现清单、RAG 素材、Agent 任务和学习路线的 Demo Vault"
+                        action={{
+                          label: "生成",
+                          variant: "secondary",
+                          onClick: onCreateDemoVault,
                         }}
                       />
                     )}

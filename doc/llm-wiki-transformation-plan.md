@@ -1,8 +1,8 @@
-# Lumina-Note → LLM Wiki 改造计划
+# Romantsy-Note → LLM Wiki 改造计划
 
 ## Context
 
-将 Lumina-Note（本地优先 AI 笔记应用）改造为受 Karpathy "LLM Wiki" 理念启发的个人知识库系统。
+将 Romantsy-Note（本地优先 AI 笔记应用）改造为受 Karpathy "LLM Wiki" 理念启发的个人知识库系统。
 
 **核心哲学**：Wiki 是一种**指导性理念**，不是产品形态的硬性约束。Vault 本身就是 wiki —— 整个工作空间就是一个由 LLM 协助维护的知识网络。Agent 保持通用灵活性，但天然具备 wiki 意识：理解知识结构、维护交叉引用、编译知识是 agent 的内在行为，不是被限死的操作模式。
 
@@ -11,7 +11,7 @@
 - Agent 在任何交互中都可以自然地读取/更新 wiki、维护引用、标记矛盾
 - 用户可以自由对话、自由操作，wiki 意识作为背景行为融入所有交互
 
-Lumina-Note 70-80% 的基础设施可复用（Markdown 编辑器、WikiLinks、Agent 编排系统、Durable Memory、多 LLM 提供商、知识图谱），但需要重新组织数据模型并增强 agent 的知识意识。
+Romantsy-Note 70-80% 的基础设施可复用（Markdown 编辑器、WikiLinks、Agent 编排系统、Durable Memory、多 LLM 提供商、知识图谱），但需要重新组织数据模型并增强 agent 的知识意识。
 
 ---
 

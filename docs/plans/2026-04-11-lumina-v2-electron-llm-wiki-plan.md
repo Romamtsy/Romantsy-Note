@@ -8,7 +8,7 @@
 
 ## 1. 背景与动机
 
-当前 Lumina-Note 基于 Tauri v2,过去半年里积累了三个相互纠缠的问题:
+当前 Romantsy-Note 基于 Tauri v2,过去半年里积累了三个相互纠缠的问题:
 
 1. **WKWebView 渲染 bug 难以根治**: live 模式下拖动选区时,经过 `Decoration.replace()` widget 会导致选区视觉异常下沉、mouseup 后 selection 丢失。根本原因是 WebKit 在拖动期间对 replaced DOM 节点的 selection 行为与 Chromium 不一致,Tauri 用系统 WebView 无法绕过。这类问题在 macOS WebView 版本变化后还会反复出现。
 2. **RAG 是被动检索器,知识无法沉淀**: 当前 vault 上的 RAG 是切块 + embedding + 检索的传统模式,跨笔记的知识关系、矛盾、概念演化都不被保留。Karpathy 在 2026-04 提出的 LLM Wiki 思路是一个直接对症的方向。
@@ -43,7 +43,7 @@
 │                                                            │
 │  ┌──────────────────────────────────────────────────────┐ │
 │  │             Renderer (Chromium + React)              │ │
-│  │  ─ 现有 Lumina-Note 前端,几乎原封不动               │ │
+│  │  ─ 现有 Romantsy-Note 前端,几乎原封不动               │ │
 │  │  ─ Editor (CodeMirror 6 + codemirror-live-markdown)  │ │
 │  │  ─ Knowledge Graph / LLM Wiki Viewer (新)            │ │
 │  │  ─ Chat / Agent / Deep Research UI                   │ │

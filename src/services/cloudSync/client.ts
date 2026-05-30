@@ -1,4 +1,4 @@
-import { tauriFetchJson } from '@/lib/tauriFetch';
+import { hostFetchJson } from '@/lib/hostFetch';
 import type { WebDAVConfig } from '@/services/webdav';
 import type {
   CloudAuthResponse,
@@ -50,7 +50,7 @@ export function parseCloudErrorMessage(raw: string): string {
 }
 
 async function postJson<T>(url: string, body: unknown, token?: string): Promise<T> {
-  const response = await tauriFetchJson<T>(url, {
+  const response = await hostFetchJson<T>(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ async function postJson<T>(url: string, body: unknown, token?: string): Promise<
 }
 
 async function getJson<T>(url: string, token: string): Promise<T> {
-  const response = await tauriFetchJson<T>(url, {
+  const response = await hostFetchJson<T>(url, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,

@@ -5,6 +5,7 @@
  */
 
 import { ipcMain, BrowserWindow, app } from "electron";
+import type { IpcMainInvokeEvent } from "electron";
 import path from "node:path";
 import { fsHandlers } from "./handlers/fs.js";
 import { platformHandlers } from "./handlers/platform.js";
@@ -166,10 +167,12 @@ export function registerIpcHandlers(options: IpcHandlersOptions): void {
     getCacheDir: () => path.join(app.getPath("userData"), "pending-updates"),
   });
 
-  // All invoke() calls from renderer land here
-  ipcMain.handle(
-    "tauri-invoke",
-    async (event, cmd: string, args: Record<string, unknown> = {}) => {
+  // All invoke() calls from renderer land here.
+  const handleHostInvoke = async (
+    event: IpcMainInvokeEvent,
+    cmd: string,
+    args: Record<string, unknown> = {},
+  ) => {
       const win =
         BrowserWindow.fromWebContents(event.sender) ?? getMainWindow();
 
@@ -244,8 +247,10 @@ export function registerIpcHandlers(options: IpcHandlersOptions): void {
         return process.env.npm_package_version ?? "0.0.0";
 
       return notImplemented(cmd);
-    },
-  );
+  };
+
+  ipcMain.handle("host-invoke", handleHostInvoke);
+  ipcMain.handle("tauri-invoke", handleHostInvoke);
 
   // Forward renderer-emitted events (emit() in JS) back to all windows if needed
   ipcMain.on("tauri-emit", (_event, eventName: string, payload: unknown) => {

@@ -34,7 +34,7 @@ const EMPTY_DIAGRAM_CONTENT = `${JSON.stringify(
   {
     type: "excalidraw",
     version: 2,
-    source: "https://lumina-note.app",
+    source: "https://romantsy-note.app",
     elements: [],
     appState: {},
     files: {},
@@ -737,7 +737,7 @@ export function useSidebarFileOperations() {
           if (splitView && activePane === "secondary") {
             openSecondaryFile(entry.path);
           } else {
-            openFile(entry.path, { preview: true });
+            openFile(entry.path);
           }
         }
       }

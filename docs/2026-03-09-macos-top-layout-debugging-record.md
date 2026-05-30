@@ -65,7 +65,7 @@
 
 这部分背景和改动方向，单独记录在：
 
-- `/Users/zzzz/Lumina-Note/docs/plans/2026-03-09-macos-top-layout-alignment.md`
+- `/Users/zzzz/Romantsy-Note/docs/plans/2026-03-09-macos-top-layout-alignment.md`
 
 ### 阶段二：否定错误方向
 
@@ -86,11 +86,11 @@
 
 本地插桩产物位于（未提交仓库，仅作为排障证据）：
 
-- `/Users/zzzz/Lumina-Note/output/playwright/mac-topbar-left.json`
-- `/Users/zzzz/Lumina-Note/output/playwright/mac-topbar-right.json`
-- `/Users/zzzz/Lumina-Note/output/playwright/mac-topbar-metrics.json`
-- `/Users/zzzz/Lumina-Note/output/playwright/mac-topbar-final-app.png`
-- `/Users/zzzz/Lumina-Note/output/playwright/mac-topbar-final.png`
+- `/Users/zzzz/Romantsy-Note/output/playwright/mac-topbar-left.json`
+- `/Users/zzzz/Romantsy-Note/output/playwright/mac-topbar-right.json`
+- `/Users/zzzz/Romantsy-Note/output/playwright/mac-topbar-metrics.json`
+- `/Users/zzzz/Romantsy-Note/output/playwright/mac-topbar-final-app.png`
+- `/Users/zzzz/Romantsy-Note/output/playwright/mac-topbar-final.png`
 
 关键测量结果：
 
@@ -125,7 +125,7 @@
 
 修复点位于：
 
-- `/Users/zzzz/Lumina-Note/src/components/layout/TabBar.tsx:205`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/TabBar.tsx:205`
 
 核心修复是让 `TabBar` 根节点带上：
 
@@ -144,7 +144,7 @@
 
 最终左侧保留了一个光学校正：
 
-- `/Users/zzzz/Lumina-Note/src/components/layout/MacLeftPaneTopBar.tsx:32`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MacLeftPaneTopBar.tsx:32`
 
 即：
 
@@ -160,7 +160,7 @@
 
 对应修正位置：
 
-- `/Users/zzzz/Lumina-Note/src/components/layout/Ribbon.tsx:248`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/Ribbon.tsx:248`
 
 保留的结果是：
 
@@ -180,10 +180,10 @@
 
 其中可以直接对应核心结论的代码位置有：
 
-- `/Users/zzzz/Lumina-Note/src/components/layout/TabBar.tsx:205`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MacLeftPaneTopBar.tsx:25`
-- `/Users/zzzz/Lumina-Note/src/components/layout/MacLeftPaneTopBar.tsx:32`
-- `/Users/zzzz/Lumina-Note/src/components/layout/Ribbon.tsx:248`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/TabBar.tsx:205`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MacLeftPaneTopBar.tsx:25`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/MacLeftPaneTopBar.tsx:32`
+- `/Users/zzzz/Romantsy-Note/src/components/layout/Ribbon.tsx:248`
 
 ## 验证记录
 

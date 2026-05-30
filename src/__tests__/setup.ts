@@ -94,6 +94,7 @@ vi.mock('@/lib/hostBridge', async () => {
   return {
     ...actual,
     isTauriAvailable: vi.fn(() => false),
+    isHostBridgeAvailable: vi.fn(() => false),
     isTauri: vi.fn(() => false),
     listen: vi.fn(() => Promise.resolve(() => {})),
     invoke: vi.fn((cmd: string, args?: unknown) => {

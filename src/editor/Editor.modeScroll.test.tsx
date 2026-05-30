@@ -176,4 +176,63 @@ describe("Editor mode scroll preservation", () => {
 
     expect(editorScroll.scrollTop).toBeCloseTo(300, 0);
   });
+
+  it("restores a file tab's scroll position after switching away and back", async () => {
+    const firstContent = Array.from({ length: 80 }, (_, i) => `First ${i + 1}`).join("\n");
+    const secondContent = Array.from({ length: 80 }, (_, i) => `Second ${i + 1}`).join("\n");
+    useFileStore.setState({
+      tabs: [
+        {
+          id: "scroll-tab-1",
+          type: "file",
+          path: "/scroll-tab-1.md",
+          name: "scroll-tab-1",
+          content: firstContent,
+          isDirty: false,
+          lastSavedContent: firstContent,
+          undoStack: [],
+          redoStack: [],
+        },
+        {
+          id: "scroll-tab-2",
+          type: "file",
+          path: "/scroll-tab-2.md",
+          name: "scroll-tab-2",
+          content: secondContent,
+          isDirty: false,
+          lastSavedContent: secondContent,
+          undoStack: [],
+          redoStack: [],
+        },
+      ],
+      activeTabIndex: 0,
+      currentFile: "/scroll-tab-1.md",
+      currentContent: firstContent,
+      isDirty: false,
+      undoStack: [],
+      redoStack: [],
+      lastSavedContent: firstContent,
+    });
+
+    render(<Editor />);
+    const editorScroll = screen.getByTestId("cm-scroll");
+    setScrollableMetrics(editorScroll, {
+      scrollHeight: 2400,
+      clientHeight: 500,
+      scrollTop: 720,
+    });
+    fireEvent.scroll(editorScroll);
+
+    await act(async () => {
+      useFileStore.getState().switchTab(1);
+    });
+    editorScroll.scrollTop = 0;
+
+    await act(async () => {
+      useFileStore.getState().switchTab(0);
+    });
+    await flushModeScrollRestore();
+
+    expect(editorScroll.scrollTop).toBeCloseTo(720, 0);
+  });
 });

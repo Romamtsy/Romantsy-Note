@@ -150,6 +150,48 @@ export function PluginSection() {
         </div>
       ) : null}
 
+      <div className="mt-4 rounded-xl border border-border/60 bg-background/70 p-4">
+        <div className="flex items-start gap-3">
+          <Shield className="mt-0.5 h-4 w-4 text-muted-foreground" />
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="text-sm font-medium text-foreground">
+              插件安全模式
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              外观插件导致界面异常或样式崩溃时，可以先禁用所有外观插件样式，再逐个排查。
+            </p>
+            {appearanceSafeMode ? (
+              <p className="text-xs text-warning">
+                {t.plugins.safeModeAffected.replace(
+                  "{count}",
+                  String(affectedBySafeMode.length),
+                )}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => isolatePluginStyles()}
+              className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+            >
+              {t.plugins.unloadStyles}
+            </button>
+            <Toggle
+              checked={appearanceSafeMode}
+              onChange={(next) =>
+                setAppearanceSafeMode(next, vaultPath || undefined)
+              }
+              label={
+                appearanceSafeMode
+                  ? t.plugins.safeModeOn
+                  : t.plugins.safeModeOff
+              }
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="mt-5 divide-y divide-border/60">
         {!loading && plugins.length === 0 ? (
           <EmptyMessage>{t.plugins.noPluginsFound}</EmptyMessage>
@@ -210,34 +252,8 @@ export function PluginSection() {
             {t.plugins.developerTools}
           </summary>
           <div className="mt-3 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-3">
-                <Shield size={14} className="text-muted-foreground" />
-                <span className="flex-1 text-foreground">
-                  {appearanceSafeMode
-                    ? t.plugins.safeModeOn
-                    : t.plugins.safeModeOff}
-                </span>
-                <Toggle
-                  checked={appearanceSafeMode}
-                  onChange={(next) =>
-                    setAppearanceSafeMode(next, vaultPath || undefined)
-                  }
-                  label={
-                    appearanceSafeMode
-                      ? t.plugins.safeModeOn
-                      : t.plugins.safeModeOff
-                  }
-                />
-              </div>
-              {appearanceSafeMode ? (
-                <div className="pl-6 text-warning">
-                  {t.plugins.safeModeAffected.replace(
-                    "{count}",
-                    String(affectedBySafeMode.length),
-                  )}
-                </div>
-              ) : null}
+            <div className="rounded-ui-md bg-muted/50 px-3 py-2 text-muted-foreground">
+              安全模式已移到插件列表顶部，方便生产环境快速止损。
             </div>
             <div className="space-y-1">
               <SidebarAction

@@ -12,7 +12,7 @@ consume these secrets; Phase 8.1/8.2 only prepares the config.
 publish:
   provider: github
   owner: blueberrycongee
-  repo: Lumina-Note
+  repo: Romantsy-Note
   releaseType: release
 ```
 

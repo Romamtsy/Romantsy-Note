@@ -1,6 +1,6 @@
 # Proxy Configuration Design
 
-**Issue:** [#167](https://github.com/blueberrycongee/Lumina-Note/issues/167)
+**Issue:** [#167](https://github.com/blueberrycongee/Romantsy-Note/issues/167)
 **Date:** 2026-03-12
 
 ## Goal

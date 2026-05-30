@@ -1,23 +1,23 @@
 <div align="center">
 
-<img src="build-resources/icon.png" alt="Lumina Note Logo" width="120" height="120" />
+<img src="build-resources/icon.png" alt="Romantsy-Note Logo" width="120" height="120" />
 
-# Lumina Note
+# Romantsy-Note
 
 **App di note AI local-first**
 
-Le tue note restano sul tuo dispositivo. Lumina Note ti aiuta a scrivere, collegare, cercare e rifinire la conoscenza con l'AI mantenendo il controllo dei tuoi dati.
+Le tue note restano sul tuo dispositivo. Romantsy-Note ti aiuta a scrivere, collegare, cercare e rifinire la conoscenza con l'AI mantenendo il controllo dei tuoi dati.
 
-[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org/)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/ci.yml)
-[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/security-audit.yml)
-[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Lumina-Note/total?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
-[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/stargazers)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/ci.yml)
+[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/security-audit.yml)
+[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Romantsy-Note/total?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
+[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/stargazers)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
 
 **Lingua**: [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md) · [Français](./README.fr.md) · [Deutsch](./README.de.md) · Italiano · [Português (Brasil)](./README.pt-BR.md) · [Русский](./README.ru.md)
@@ -26,7 +26,7 @@ Le tue note restano sul tuo dispositivo. Lumina Note ti aiuta a scrivere, colleg
 
 ---
 
-<h2 align="center">Perché Lumina Note</h2>
+<h2 align="center">Perché Romantsy-Note</h2>
 
 - **Progettato local-first**: il tuo vault resta in locale e decidi tu cosa inviare ai provider di modelli.
 - **Flusso di lavoro centrato sulla conoscenza**: editing Markdown, WikiLinks, vista grafo e agenti AI lavorano come un unico sistema.
@@ -38,7 +38,7 @@ Le tue note restano sul tuo dispositivo. Lumina Note ti aiuta a scrivere, colleg
 
 <div align="center">
 
-Scarica l'ultima versione da [Releases](https://github.com/blueberrycongee/Lumina-Note/releases):
+Scarica l'ultima versione da [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases):
 
 | Piattaforma | Pacchetto |
 |------------|-----------|
@@ -105,7 +105,7 @@ Scarica l'ultima versione da [Releases](https://github.com/blueberrycongee/Lumin
 
 <h2 align="center">Avvio rapido</h2>
 
-1. Installa Lumina Note da Releases.
+1. Installa Romantsy-Note da Releases.
 2. Al primo avvio scegli una cartella locale come vault.
 3. Configura un provider di modelli e la tua API key nel pannello AI, poi opzionalmente scegli il tuo modello preferito.
 4. Crea la tua prima nota e inizia a collegarla con `[[WikiLinks]]`.
@@ -135,8 +135,8 @@ Requisiti:
 - 
 
 ```bash
-git clone https://github.com/blueberrycongee/Lumina-Note.git
-cd Lumina-Note
+git clone https://github.com/blueberrycongee/Romantsy-Note.git
+cd Romantsy-Note
 npm install
 npm run dev
 ```
@@ -161,8 +161,8 @@ npm run dev
 
 <h2 align="center">Contributori</h2>
 
-<a href="https://github.com/blueberrycongee/Lumina-Note/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=blueberrycongee/Lumina-Note" />
+<a href="https://github.com/blueberrycongee/Romantsy-Note/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=blueberrycongee/Romantsy-Note" />
 </a>
 
 ---
@@ -175,4 +175,4 @@ npm run dev
 
 <h2 align="center">Star History</h2>
 
-[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Lumina-Note&type=Date)](https://star-history.com/#blueberrycongee/Lumina-Note&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Romantsy-Note&type=Date)](https://star-history.com/#blueberrycongee/Romantsy-Note&Date)

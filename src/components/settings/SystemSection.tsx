@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getVersion } from "@/lib/host";
 import { useLocaleStore } from "@/stores/useLocaleStore";
 import { VscodeAiExtensionsSection } from "./VscodeAiExtensionsSection";
+import { IndexDiagnosticsSection } from "./IndexDiagnosticsSection";
 
 interface SystemSectionProps {
   onOpenUpdateModal: () => void;
@@ -49,6 +50,8 @@ export function SystemSection({ onOpenUpdateModal }: SystemSectionProps) {
         </div>
       </section>
 
+      <IndexDiagnosticsSection />
+
       <VscodeAiExtensionsSection />
 
       {/* 关于 */}
@@ -59,7 +62,7 @@ export function SystemSection({ onOpenUpdateModal }: SystemSectionProps) {
 
         <div className="flex items-center justify-between py-2">
           <div>
-            <p className="font-medium">Lumina Note</p>
+            <p className="font-medium">Romantsy-Note</p>
             <p className="text-sm text-muted-foreground">
               {t.settingsModal.appDescription}
             </p>

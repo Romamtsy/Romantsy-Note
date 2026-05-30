@@ -63,7 +63,7 @@ export function ExtensionsCenterView({
         description={
           (t.plugins as typeof t.plugins & { centerDescription?: string })
             .centerDescription ??
-          "Manage Lumina plugins and agent skills from one place."
+          "Manage Romantsy plugins and agent skills from one place."
         }
         className="pb-3"
       />

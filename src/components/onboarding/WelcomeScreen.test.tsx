@@ -38,11 +38,11 @@ vi.mock("@/stores/useLocaleStore", () => ({
   useLocaleStore: () => ({
     t: {
       welcome: {
-        title: "Lumina Note",
+        title: "Romantsy-Note",
         openFolder: "Open Notes Folder",
         selectFolder: "Select a folder to continue",
         createVault: "Create New Vault",
-        createVaultDesc: "Create a new folder with Lumina workspace structure",
+        createVaultDesc: "Create a new folder with Romantsy workspace structure",
         vaultNamePlaceholder: "My Notes",
         recentVaults: "Recent Vaults",
         noRecentVaults: "No recent vaults",
@@ -60,7 +60,11 @@ vi.mock("@/stores/useLocaleStore", () => ({
 }));
 
 vi.mock("@/lib/appAsset", () => ({
-  resolveRendererAssetUrl: () => "lumina.png",
+  resolveRendererAssetUrl: () => "romantsy.png",
+}));
+
+vi.mock("@/lib/host", () => ({
+  openDialog: vi.fn(),
 }));
 
 vi.mock("@/stores/useRecentVaultStore", () => ({
@@ -73,10 +77,6 @@ vi.mock("@/stores/useRecentVaultStore", () => ({
   ) => selector({ vaults: [], removeVault: vi.fn(), clearVaults: vi.fn() }),
 }));
 
-vi.mock("@tauri-apps/plugin-dialog", () => ({
-  openDialog: vi.fn(),
-}));
-
 describe("WelcomeScreen", () => {
   beforeEach(() => {
     macTopChromeEnabled.value = false;
@@ -85,7 +85,7 @@ describe("WelcomeScreen", () => {
   it("renders the two-pane layout", () => {
     render(<WelcomeScreen onOpenVault={vi.fn()} />);
     expect(
-      screen.getByRole("heading", { name: "Lumina Note" }),
+      screen.getByRole("heading", { name: "Romantsy-Note" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Open Notes Folder")).toBeInTheDocument();
     expect(screen.getByText("No recent vaults")).toBeInTheDocument();
@@ -108,6 +108,13 @@ describe("WelcomeScreen", () => {
   it("shows Create New Vault when onCreateVault prop is provided", () => {
     render(<WelcomeScreen onOpenVault={vi.fn()} onCreateVault={vi.fn()} />);
     expect(screen.getByText("Create New Vault")).toBeInTheDocument();
+  });
+
+  it("shows the Demo Vault action when onCreateDemoVault prop is provided", () => {
+    render(
+      <WelcomeScreen onOpenVault={vi.fn()} onCreateDemoVault={vi.fn()} />,
+    );
+    expect(screen.getByText("生成演示笔记库")).toBeInTheDocument();
   });
 
   it("hides Create New Vault when onCreateVault prop is not provided", () => {
@@ -134,7 +141,7 @@ describe("WelcomeScreen", () => {
     const backButton = await screen.findByRole("button", { name: /cancel/i });
     fireEvent.click(backButton);
     expect(
-      await screen.findByRole("heading", { name: "Lumina Note" }),
+      await screen.findByRole("heading", { name: "Romantsy-Note" }),
     ).toBeInTheDocument();
   });
 

@@ -1,17 +1,17 @@
-import { isTauri, platform } from "@/lib/host";
+import { isHostBridgeAvailable, platform } from "@/lib/host";
 import { useEffect, useState, type ReactNode } from "react";
 
 const isMacByNavigator = (): boolean =>
   typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
 
 export function useMacTopChromeEnabled(): boolean {
-  const tauriRuntime = isTauri();
-  const [enabled, setEnabled] = useState(() => tauriRuntime && isMacByNavigator());
+  const hostBridgeAvailable = isHostBridgeAvailable();
+  const [enabled, setEnabled] = useState(() => hostBridgeAvailable && isMacByNavigator());
 
   useEffect(() => {
     let disposed = false;
 
-    if (!tauriRuntime) {
+    if (!hostBridgeAvailable) {
       setEnabled(false);
       return;
     }
@@ -30,7 +30,7 @@ export function useMacTopChromeEnabled(): boolean {
     return () => {
       disposed = true;
     };
-  }, [tauriRuntime]);
+  }, [hostBridgeAvailable]);
 
   return enabled;
 }

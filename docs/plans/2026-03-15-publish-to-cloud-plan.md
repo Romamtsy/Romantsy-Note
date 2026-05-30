@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Allow authenticated users to publish their note vault as a publicly accessible static website hosted on the Lumina-Note server.
+**Goal:** Allow authenticated users to publish their note vault as a publicly accessible static website hosted on the Romantsy-Note server.
 
 **Architecture:** Frontend reuses the existing static site generator (`publishSite()`), uploads files to the server via a new WebDAV-like endpoint scoped to `data/sites/{user_id}/`, and a new public route serves the static files. The server already has WebDAV infrastructure (auth, streaming write, path sanitization) — we extract shared helpers and reuse them.
 
@@ -93,7 +93,7 @@ pub async fn delete_published_site(
 
 **Step 3: Verify it compiles**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note/server && cargo check`
+Run: `cd /Users/blueberrycongee/Romantsy-Note/server && cargo check`
 
 **Step 4: Commit**
 
@@ -147,7 +147,7 @@ pub(crate) fn site_root(state: &AppState, user_id: &str) -> PathBuf {
 
 **Step 2: Verify it compiles**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note/server && cargo check`
+Run: `cd /Users/blueberrycongee/Romantsy-Note/server && cargo check`
 
 **Step 3: Commit**
 
@@ -269,7 +269,7 @@ Add routes in the router chain (after the `/dav` routes, before `.with_state(sta
 
 **Step 3: Verify it compiles**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note/server && cargo check`
+Run: `cd /Users/blueberrycongee/Romantsy-Note/server && cargo check`
 
 **Step 4: Commit**
 
@@ -348,7 +348,7 @@ Add after the sites GET routes:
 
 **Step 3: Verify it compiles**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note/server && cargo check`
+Run: `cd /Users/blueberrycongee/Romantsy-Note/server && cargo check`
 
 **Step 4: Commit**
 
@@ -451,12 +451,12 @@ Add after the dav-sites routes:
 
 **Step 4: Verify it compiles**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note/server && cargo check`
+Run: `cd /Users/blueberrycongee/Romantsy-Note/server && cargo check`
 
 **Step 5: Run `cargo fmt` and `cargo test`**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note/server && cargo fmt && cargo test
+cd /Users/blueberrycongee/Romantsy-Note/server && cargo fmt && cargo test
 ```
 
 **Step 6: Commit**
@@ -874,19 +874,19 @@ git commit -m "feat: add cloud publish UI to settings panel"
 **Step 1: Run frontend tests**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && npx vitest run
+cd /Users/blueberrycongee/Romantsy-Note && npx vitest run
 ```
 
 **Step 2: Run TypeScript type check**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && npx tsc --noEmit
+cd /Users/blueberrycongee/Romantsy-Note && npx tsc --noEmit
 ```
 
 **Step 3: Run server tests and checks**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note/server && cargo fmt && cargo clippy && cargo test
+cd /Users/blueberrycongee/Romantsy-Note/server && cargo fmt && cargo clippy && cargo test
 ```
 
 **Step 4: Push branch**

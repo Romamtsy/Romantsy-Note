@@ -1,4 +1,4 @@
-# lumina-cloud ↔ Lumina-Note — Wire Contract
+# lumina-cloud ↔ Romantsy-Note — Wire Contract
 
 **Status:** Draft v0.1 · 2026-04-28
 **This file MUST be byte-identical in both repos.** When you change one, change the other in the same commit.
@@ -7,7 +7,7 @@
 
 ## 0. Conventions
 
-- All endpoints are HTTPS; production base URL is `https://api.lumina-note.com`. Dev: `https://lumina-cloud-dev.<account>.workers.dev`.
+- All endpoints are HTTPS; production base URL is `https://api.romantsy-note.com`. Dev: `https://lumina-cloud-dev.<account>.workers.dev`.
 - All request and response bodies are JSON unless noted.
 - All timestamps are ISO 8601 UTC with `Z` suffix.
 - All money is in USD cents (integer).
@@ -43,7 +43,7 @@ license = base64url(payload_json) + "." + base64url(signature)
 ### 1.2 Signature
 
 - Algorithm: **Ed25519** over the **canonical JSON of the payload** (RFC 8785 / JCS, or simplest: `JSON.stringify` with sorted keys, no whitespace).
-- Public key: bundled in `Lumina-Note/src/services/luminaCloud/PUBLIC_KEY.ts` as a base64-encoded 32-byte raw Ed25519 public key.
+- Public key: bundled in `Romantsy-Note/src/services/luminaCloud/PUBLIC_KEY.ts` as a base64-encoded 32-byte raw Ed25519 public key.
 - Private key: lives only as a Cloudflare Worker secret named `LICENSE_SIGNING_KEY` (base64-encoded 32-byte seed). Never in any repo.
 
 ### 1.3 Verification (client side)
@@ -227,8 +227,8 @@ Standard codes:
 
 The Ed25519 **public key** lives at:
 
-- `Lumina-Note/src/services/luminaCloud/PUBLIC_KEY.ts` (hardcoded, shipped in client builds)
-- `https://api.lumina-note.com/.well-known/lumina-pubkey` (mirror for tooling, not used by client at runtime)
+- `Romantsy-Note/src/services/luminaCloud/PUBLIC_KEY.ts` (hardcoded, shipped in client builds)
+- `https://api.romantsy-note.com/.well-known/lumina-pubkey` (mirror for tooling, not used by client at runtime)
 
 Rotation: not supported in v1. If we ever need to rotate, ship a client update with the new key first, then start signing with the new key after a transition window.
 

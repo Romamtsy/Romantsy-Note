@@ -1,23 +1,23 @@
 <div align="center">
 
-<img src="build-resources/icon.png" alt="Lumina Note Logo" width="120" height="120" />
+<img src="build-resources/icon.png" alt="Romantsy-Note Logo" width="120" height="120" />
 
-# Lumina Note
+# Romantsy-Note
 
 **本地优先的 AI 笔记应用**
 
-你的笔记默认保留在设备本地。Lumina Note 用 AI 帮你写作、连接、检索和整理知识，同时把数据控制权留在你手里。
+你的笔记默认保留在设备本地。Romantsy-Note 用 AI 帮你写作、连接、检索和整理知识，同时把数据控制权留在你手里。
 
-[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org/)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/ci.yml)
-[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Lumina-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Lumina-Note/actions/workflows/security-audit.yml)
-[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Lumina-Note/total?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
-[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/stargazers)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Lumina-Note?style=flat-square)](https://github.com/blueberrycongee/Lumina-Note/commits/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/ci.yml)
+[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/security-audit.yml)
+[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Romantsy-Note/total?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
+[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/stargazers)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
 
 **语言**： [English](./README.md) · 简体中文 · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md) · [Français](./README.fr.md) · [Deutsch](./README.de.md) · [Italiano](./README.it.md) · [Português (Brasil)](./README.pt-BR.md) · [Русский](./README.ru.md)
@@ -26,7 +26,7 @@
 
 ---
 
-<h2 align="center">为什么选择 Lumina Note</h2>
+<h2 align="center">为什么选择 Romantsy-Note</h2>
 
 - **本地优先**：你的笔记库保留在本地，是否发送给模型服务商由你决定。
 - **围绕知识工作流设计**：Markdown 编辑、双链、图谱和 AI agent 是一个整体。
@@ -38,7 +38,7 @@
 
 <div align="center">
 
-前往 [Releases](https://github.com/blueberrycongee/Lumina-Note/releases) 获取最新版：
+前往 [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases) 获取最新版：
 
 | 平台 | 安装包 |
 |------|--------|
@@ -102,15 +102,15 @@
 - Slash Command 扩展 API
 - 开发文档：`docs/plugin-ecosystem.md`
 
-<h3 align="center">可选：Lumina Cloud（付费）</h3>
+<h3 align="center">可选：Romantsy Cloud（付费）</h3>
 
-如果你不想自己配置 API key，Lumina Cloud 是基于许可证的可选服务。一次性买断或月度订阅可解锁 AI 设置中的 "Lumina Cloud" provider，模型一致，推理由 Lumina 承担。Lumina Note 默认仍然是 local-first，只有持有许可证时云端功能才会启用。详情见 [lumina-note.com](https://lumina-note.com)。
+如果你不想自己配置 API key，Romantsy Cloud 是基于许可证的可选服务。一次性买断或月度订阅可解锁 AI 设置中的 "Romantsy Cloud" provider，模型一致，推理由 Romantsy 承担。Romantsy-Note 默认仍然是 local-first，只有持有许可证时云端功能才会启用。详情见 [romantsy-note.com](https://romantsy-note.com)。
 
 ---
 
 <h2 align="center">快速开始</h2>
 
-1. 从 Releases 安装 Lumina Note。
+1. 从 Releases 安装 Romantsy-Note。
 2. 首次启动时选择一个本地文件夹作为笔记库。
 3. 在 AI 面板中配置模型服务商和 API Key，并可在设置中选择偏好模型。
 4. 创建第一条笔记，并通过 `[[WikiLinks]]` 建立连接。
@@ -140,8 +140,8 @@
 - 
 
 ```bash
-git clone https://github.com/blueberrycongee/Lumina-Note.git
-cd Lumina-Note
+git clone https://github.com/blueberrycongee/Romantsy-Note.git
+cd Romantsy-Note
 npm install
 npm run dev
 ```
@@ -165,8 +165,8 @@ npm run dev
 
 <h2 align="center">贡献者</h2>
 
-<a href="https://github.com/blueberrycongee/Lumina-Note/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=blueberrycongee/Lumina-Note" />
+<a href="https://github.com/blueberrycongee/Romantsy-Note/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=blueberrycongee/Romantsy-Note" />
 </a>
 
 ---
@@ -179,4 +179,4 @@ npm run dev
 
 <h2 align="center">Star History</h2>
 
-[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Lumina-Note&type=Date)](https://star-history.com/#blueberrycongee/Lumina-Note&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Romantsy-Note&type=Date)](https://star-history.com/#blueberrycongee/Romantsy-Note&Date)

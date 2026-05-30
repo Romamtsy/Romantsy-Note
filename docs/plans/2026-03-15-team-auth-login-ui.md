@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add a standalone login/register UI flow for team collaboration features, seamlessly integrated into the existing Lumina-Note design language.
+**Goal:** Add a standalone login/register UI flow for team collaboration features, seamlessly integrated into the existing Romantsy-Note design language.
 
 **Architecture:** When a user clicks the team section in Sidebar without being authenticated, a full-screen auth modal (TeamAuthModal) appears over the current workspace. It reuses `useCloudSyncStore` for all auth logic (register/login/logout/refresh) and passes the session token to `useOrgStore`. No new backend work is needed — the server already has complete auth endpoints (POST /auth/register, /auth/login, /auth/refresh).
 
@@ -582,7 +582,7 @@ describe('TeamAuthModal', () => {
 
 **Step 2: Run tests to verify they pass**
 
-Run: `cd /Users/blueberrycongee/Lumina-Note && npx vitest run src/components/team/__tests__/TeamAuthModal.test.tsx`
+Run: `cd /Users/blueberrycongee/Romantsy-Note && npx vitest run src/components/team/__tests__/TeamAuthModal.test.tsx`
 
 Expected: All 6 tests PASS. If any import paths differ (e.g. `useTranslation` location), adjust mocks to match actual project paths.
 
@@ -770,7 +770,7 @@ git commit -m "feat: add user email display and logout button to OrgSwitcher"
 **Step 1: Run the full test suite**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && npx vitest run
+cd /Users/blueberrycongee/Romantsy-Note && npx vitest run
 ```
 
 Expected: All tests pass, including the new TeamAuthModal tests.
@@ -778,7 +778,7 @@ Expected: All tests pass, including the new TeamAuthModal tests.
 **Step 2: Run TypeScript type check**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && npx tsc --noEmit
+cd /Users/blueberrycongee/Romantsy-Note && npx tsc --noEmit
 ```
 
 Expected: No type errors.
@@ -786,7 +786,7 @@ Expected: No type errors.
 **Step 3: Start dev server and verify visually (if possible)**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && npm run dev
+cd /Users/blueberrycongee/Romantsy-Note && npm run dev
 ```
 
 Manual check:
@@ -801,7 +801,7 @@ Manual check:
 **Step 4: Push to remote main**
 
 ```bash
-cd /Users/blueberrycongee/Lumina-Note && git push origin main
+cd /Users/blueberrycongee/Romantsy-Note && git push origin main
 ```
 
 ---

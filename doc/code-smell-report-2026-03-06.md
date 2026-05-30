@@ -1,4 +1,4 @@
-# Lumina-Note 代码异味扫描报告
+# Romantsy-Note 代码异味扫描报告
 
 - 扫描时间: 2026-03-06
 - 扫描范围: `src/`, `src-tauri/`, `server/`（含 TypeScript/TSX/Rust/Python）
@@ -123,7 +123,7 @@
 
 **证据（`cargo clippy --all-targets --all-features`）**
 
-- `lumina-note (lib)` 生成 `38` 条警告；`bin` 生成 `42` 条警告（含重复）。
+- `romantsy-note (lib)` 生成 `38` 条警告；`bin` 生成 `42` 条警告（含重复）。
 - 代表性问题:
   - 参数过多: `src/agent/forge_loop.rs:93`, `src/commands/mod.rs:282`
   - 低效读取: `src/commands/mod.rs:678`（`DeflateDecoder::bytes()`）

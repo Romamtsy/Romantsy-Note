@@ -2,7 +2,7 @@
 
 > **Execution note:** Use `executing-plans` to implement this plan task-by-task, or another equivalent execution workflow supported by the current agent runtime.
 
-**Goal:** Warm Lumina-Note's default fallback palette and reinforce hierarchy accents across sidebar, tabs, ribbon, and right panel without breaking theme overrides.
+**Goal:** Warm Romantsy-Note's default fallback palette and reinforce hierarchy accents across sidebar, tabs, ribbon, and right panel without breaking theme overrides.
 
 **Architecture:** Keep the theme system intact by only adjusting fallback CSS custom properties in `src/styles/globals.css` and updating component class names that already consume semantic tokens or local Tailwind colors. Cover the behavior with small, targeted tests that assert the new CSS token values and the intended icon or active-state classes.
 

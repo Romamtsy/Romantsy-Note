@@ -114,7 +114,7 @@ vi.mock("@/stores/useUpdateStore", () => ({
 
 vi.mock("@/lib/host", () => ({
   exists: async () => false,
-  isTauriAvailable: () => true,
+  isHostBridgeAvailable: () => true,
   openExternal: async () => undefined,
 }));
 

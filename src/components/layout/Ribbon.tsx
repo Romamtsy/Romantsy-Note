@@ -30,7 +30,7 @@ import {
 import { openExternal } from "@/lib/host";
 
 import { cn } from "@/lib/utils";
-import { exists, isTauriAvailable } from "@/lib/host";
+import { exists, isHostBridgeAvailable } from "@/lib/host";
 import { SettingsModal } from "./SettingsModal";
 import { UpdateModal } from "./UpdateModal";
 import { WindowControls } from "./WindowControls";
@@ -50,7 +50,7 @@ export function Ribbon({
   showMacTrafficLightSafeArea = false,
   flushTopSpacing = false,
 }: RibbonProps) {
-  const REPO_URL = "https://github.com/blueberrycongee/Lumina-Note";
+  const REPO_URL = "https://github.com/blueberrycongee/Romantsy-Note";
   const [showSettings, setShowSettings] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const closeSettings = useCallback(() => setShowSettings(false), []);
@@ -253,7 +253,7 @@ export function Ribbon({
     currentVersion,
     isChecking,
   });
-  const updatesSupported = isTauriAvailable();
+  const updatesSupported = isHostBridgeAvailable();
   const updateTitleDetail =
     updateRibbonState === "ready"
       ? t.updateChecker.descReady

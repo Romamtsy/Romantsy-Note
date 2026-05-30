@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef, useState, useLayoutEffect, type RefObject } from "react";
-import { useFileStore } from "@/stores/useFileStore";
+import { useFileStore, type Tab } from "@/stores/useFileStore";
 import { useNoteHoverPreview } from "@/lib/useWikiLinkHover";
 import { NoteHoverPreview } from "@/components/wiki/WikiLinkHoverCard";
 import { useShallow } from "zustand/react/shallow";
@@ -28,6 +28,15 @@ import {
   X,
   Check,
   Loader2,
+  Bold,
+  Italic,
+  Strikethrough,
+  Code,
+  List,
+  ListOrdered,
+  CheckSquare,
+  Quote,
+  Link,
 } from "lucide-react";
 import { exportToPdf, getExportFileName } from "@/services/pdf/exportPdf";
 import { cn } from "@/lib/utils";
@@ -43,6 +52,8 @@ const modeIcons: Record<EditorMode, React.ReactNode> = {
 
 // 局部图谱展开状态（组件外部以保持状态）
 let localGraphExpandedState = false;
+
+const tabScrollPositions = new Map<string, ModeScrollSnapshot>();
 
 type ModeScrollSnapshot = {
   mode: EditorMode;
@@ -89,6 +100,11 @@ function restoreModeScrollSnapshot(
   const scrollTop = clampScrollTop(targetTop, maxScrollTop);
   element.scrollTop = scrollTop;
   return { scrollTop, maxScrollTop };
+}
+
+function getTabScrollKey(tab: Tab | null) {
+  if (!tab) return null;
+  return tab.type === "file" && tab.path ? `file:${tab.path}` : `tab:${tab.id}`;
 }
 
 /**
@@ -153,12 +169,14 @@ export function Editor() {
     editorMode,
     setEditorMode,
     toggleSplitView,
+    setLastReadFilePath,
   } = useUIStore();
 
   const editorRef = useRef<CodeMirrorEditorRef>(null);
   const scrollContainerRef = useRef<HTMLElement | null>(null);
   const liveEditorHostRef = useRef<HTMLDivElement>(null);
   const pendingModeScrollSnapshotRef = useRef<ModeScrollSnapshot | null>(null);
+  const lastRestoredTabScrollKeyRef = useRef<string | null>(null);
   const lastOuterScrollTraceAtRef = useRef(0);
   const editorScrollFadeTimerRef = useRef<number | null>(null);
   const [_isEditorScrollActive, setIsEditorScrollActive] = useState(false);
@@ -175,6 +193,11 @@ export function Editor() {
   );
 
   const activeTab = activeTabIndex >= 0 ? tabs[activeTabIndex] : null;
+  const activeTabScrollKey = getTabScrollKey(activeTab);
+
+  useEffect(() => {
+    if (currentFile) setLastReadFilePath(currentFile);
+  }, [currentFile, setLastReadFilePath]);
 
   const markEditorTrace = useCallback(
     (type: string, payload: Record<string, unknown> = {}) => {
@@ -199,6 +222,75 @@ export function Editor() {
     return editorHandle instanceof HTMLElement ? editorHandle : null;
   }, []);
 
+  const rememberActiveTabScroll = useCallback(() => {
+    if (!activeTabScrollKey) return;
+    const container = scrollContainerRef.current ?? getScrollContainerForMode(editorMode);
+    if (!container) return;
+    if (currentFile) setLastReadFilePath(currentFile);
+    tabScrollPositions.set(
+      activeTabScrollKey,
+      captureModeScrollSnapshot(container, editorMode),
+    );
+  }, [
+    activeTabScrollKey,
+    currentFile,
+    editorMode,
+    getScrollContainerForMode,
+    setLastReadFilePath,
+  ]);
+
+  useEffect(() => {
+    if (!activeTabScrollKey) return;
+    if (lastRestoredTabScrollKeyRef.current === activeTabScrollKey) return;
+    const snapshot = tabScrollPositions.get(activeTabScrollKey);
+    if (!snapshot) return;
+
+    const restore = (phase: string) => {
+      const container = getScrollContainerForMode(editorMode);
+      scrollContainerRef.current = container;
+      if (!container) return;
+      const restored = restoreModeScrollSnapshot(container, snapshot);
+      markEditorTrace("editor-tab-scroll-restored", {
+        tabScrollKey: activeTabScrollKey,
+        mode: editorMode,
+        phase,
+        sourceScrollTop: snapshot.scrollTop,
+        sourceMaxScrollTop: snapshot.maxScrollTop,
+        targetScrollTop: restored.scrollTop,
+        targetMaxScrollTop: restored.maxScrollTop,
+      });
+    };
+
+    lastRestoredTabScrollKeyRef.current = activeTabScrollKey;
+    let timeoutId = 0;
+    let firstFrame = 0;
+    let secondFrame = 0;
+    let thirdFrame = 0;
+    timeoutId = window.setTimeout(() => {
+      restore("timeout");
+      firstFrame = window.requestAnimationFrame(() => {
+        restore("raf-1");
+        secondFrame = window.requestAnimationFrame(() => {
+          restore("raf-2");
+          thirdFrame = window.requestAnimationFrame(() => restore("raf-3"));
+        });
+      });
+    }, 0);
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      if (firstFrame) window.cancelAnimationFrame(firstFrame);
+      if (secondFrame) window.cancelAnimationFrame(secondFrame);
+      if (thirdFrame) window.cancelAnimationFrame(thirdFrame);
+    };
+  }, [
+    activeTabScrollKey,
+    currentContent,
+    editorMode,
+    getScrollContainerForMode,
+    markEditorTrace,
+  ]);
+
   // 局部图谱展开/收起状态
   const [localGraphExpanded, setLocalGraphExpanded] = useState(
     localGraphExpandedState,
@@ -210,6 +302,13 @@ export function Editor() {
     });
   }, []);
 
+  const formatText = useCallback((format: string) => {
+    window.dispatchEvent(
+      new CustomEvent("editor-format-text", {
+        detail: { format },
+      }),
+    );
+  }, []);
   useLayoutEffect(() => {
     const container = getScrollContainerForMode(editorMode);
     scrollContainerRef.current = container;
@@ -268,6 +367,7 @@ export function Editor() {
       };
     };
     const handleOuterScroll = () => {
+      rememberActiveTabScroll();
       setIsEditorScrollActive(true);
       if (editorScrollFadeTimerRef.current !== null) {
         window.clearTimeout(editorScrollFadeTimerRef.current);
@@ -356,6 +456,7 @@ export function Editor() {
     container.addEventListener("pointerup", handleOuterPointerUp);
     container.addEventListener("click", handleOuterClick);
     return () => {
+      rememberActiveTabScroll();
       if (editorScrollFadeTimerRef.current !== null) {
         window.clearTimeout(editorScrollFadeTimerRef.current);
         editorScrollFadeTimerRef.current = null;
@@ -367,7 +468,7 @@ export function Editor() {
       container.removeEventListener("pointerup", handleOuterPointerUp);
       container.removeEventListener("click", handleOuterClick);
     };
-  }, [editorMode, getLineFromScrollPosition, markEditorTrace]);
+  }, [editorMode, getLineFromScrollPosition, markEditorTrace, rememberActiveTabScroll]);
 
   const handleModeChange = useCallback(
     (mode: EditorMode) => {
@@ -377,6 +478,9 @@ export function Editor() {
         ? captureModeScrollSnapshot(scrollContainer, editorMode)
         : null;
       pendingModeScrollSnapshotRef.current = scrollSnapshot;
+      if (activeTabScrollKey && scrollSnapshot) {
+        tabScrollPositions.set(activeTabScrollKey, scrollSnapshot);
+      }
       markEditorTrace("editor-mode-change-requested", {
         previousMode: editorMode,
         mode,
@@ -388,6 +492,7 @@ export function Editor() {
     },
     [
       activeTab?.type,
+      activeTabScrollKey,
       editorMode,
       getScrollContainerForMode,
       markEditorTrace,
@@ -537,6 +642,101 @@ export function Editor() {
               </button>
             </div>
 
+            {/* Markdown Format Toolbar */}
+            {editorMode !== "reading" && (
+              <div className="flex items-center gap-0.5 ml-2 pl-2 border-l border-border shrink-0">
+                <button
+                  onClick={() => formatText("bold")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="加粗 (Bold)"
+                >
+                  <Bold size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("italic")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="斜体 (Italic)"
+                >
+                  <Italic size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("strikethrough")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="删除线 (Strikethrough)"
+                >
+                  <Strikethrough size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("code")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="代码行 (Code)"
+                >
+                  <Code size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("link")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="超链接 (Link)"
+                >
+                  <Link size={14} />
+                </button>
+
+                <div className="w-px h-4 bg-border mx-1" />
+
+                <button
+                  onClick={() => formatText("h1")}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-ui-sm text-[11px] font-bold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  title="一级标题 (Heading 1)"
+                >
+                  H1
+                </button>
+                <button
+                  onClick={() => formatText("h2")}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-ui-sm text-[11px] font-bold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  title="二级标题 (Heading 2)"
+                >
+                  H2
+                </button>
+                <button
+                  onClick={() => formatText("h3")}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-ui-sm text-[11px] font-bold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  title="三级标题 (Heading 3)"
+                >
+                  H3
+                </button>
+
+                <div className="w-px h-4 bg-border mx-1" />
+
+                <button
+                  onClick={() => formatText("ul")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="无序列表 (Bullet List)"
+                >
+                  <List size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("ol")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="有序列表"
+                >
+                  <ListOrdered size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("task")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="任务列表 (Task List)"
+                >
+                  <CheckSquare size={14} />
+                </button>
+                <button
+                  onClick={() => formatText("quote")}
+                  className={EDITOR_ICON_BUTTON_CLASS}
+                  title="块引用 (Quote)"
+                >
+                  <Quote size={14} />
+                </button>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3 shrink-0">
             {/* Mode Switcher — single button cycling live → reading → source */}
