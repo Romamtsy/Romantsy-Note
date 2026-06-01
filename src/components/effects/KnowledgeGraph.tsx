@@ -17,7 +17,9 @@ import {
   MousePointer2,
   Settings,
   ChevronUp,
+  ChevronDown,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getWikiPreview } from "@/lib/wikiLinks";
@@ -242,6 +244,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const nodesRef = useRef<GraphNode[]>([]);
   const edgesRef = useRef<GraphEdge[]>([]);
   const hoverPreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchPanAnimationRef = useRef<number | null>(null);
   const emphasisRef = useRef<Map<string, number>>(new Map());
   const focusBlendRef = useRef(0);
 
@@ -277,6 +280,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
     indexedCount,
     truncated: indexTruncated,
     buildIndex,
+    getBacklinks,
   } = useNoteIndexStore(
     useShallow((state) => ({
       noteIndex: state.noteIndex,
@@ -285,6 +289,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       indexedCount: state.indexedCount,
       truncated: state.truncated,
       buildIndex: state.buildIndex,
+      getBacklinks: state.getBacklinks,
     })),
   );
   const { t } = useLocaleStore();
@@ -299,7 +304,8 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [hoverPreview, setHoverPreview] = useState<HoverPreviewState | null>(null);
-  const [displayCounts, setDisplayCounts] = useState({ nodes: 0, edges: 0 });
+  const [displayCounts, setDisplayCounts] = useState({ nodes: 0, edges: 0, isolated: 0 });
+  const [searchQuery, setSearchQuery] = useState("");
   const [graphStatus, setGraphStatus] = useState<KnowledgeGraphStatus>({
     totalNotes: 0,
     displayedNotes: 0,
@@ -329,6 +335,9 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
   const [showLabels, setShowLabels] = useState(true);
   const [showFolders, setShowFolders] = useState(true); // 是否显示文件夹节点
 
+  const [onlyIsolated, setOnlyIsolated] = useState(false);
+  const [onlyConnected, setOnlyConnected] = useState(false);
+  const [showIsolatedList, setShowIsolatedList] = useState(false);
   const nodeById = useCallback((id: string) => {
     return nodesRef.current.find((node) => node.id === id) ?? null;
   }, []);
@@ -464,6 +473,17 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       );
     }
 
+    if (onlyIsolated) {
+      displayNodes = displayNodes.filter((n) => !n.isFolder && n.connections === 0);
+    } else if (onlyConnected) {
+      displayNodes = displayNodes.filter((n) => n.isFolder || n.connections > 0);
+    }
+
+    const activeNodeIds = new Set(displayNodes.map((n) => n.id));
+    displayEdges = displayEdges.filter(
+      (e) => activeNodeIds.has(e.source) && activeNodeIds.has(e.target),
+    );
+
     // Initialize positions
     const width = containerRef.current?.offsetWidth || 400;
     const height = containerRef.current?.offsetHeight || 400;
@@ -471,8 +491,12 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
     edgesRef.current = displayEdges;
 
     setDimensions({ width, height });
-    setDisplayCounts({ nodes: displayNodes.length, edges: displayEdges.length });
-  }, [isolatedNode]);
+    setDisplayCounts({
+      nodes: displayNodes.length,
+      edges: displayEdges.length,
+      isolated: displayNodes.filter((n) => !n.isFolder && n.connections === 0).length,
+    });
+  }, [isolatedNode, onlyConnected, onlyIsolated]);
 
   // Build graph from the vault note index, not the lazy sidebar tree.
   useEffect(() => {
@@ -503,6 +527,10 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       window.removeEventListener("resize", handleResize);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+      }
+      if (searchPanAnimationRef.current) {
+        cancelAnimationFrame(searchPanAnimationRef.current);
+        searchPanAnimationRef.current = null;
       }
       if (hoverPreviewTimerRef.current) {
         clearTimeout(hoverPreviewTimerRef.current);
@@ -586,6 +614,11 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
     const focusBlendTarget = hasSelection ? 1 : 0;
     focusBlendRef.current += (focusBlendTarget - focusBlendRef.current) * 0.16;
     const focusBlend = focusBlendRef.current;
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+    const isSearchMatch = (node: GraphNode) =>
+      !normalizedSearchQuery ||
+      node.label.toLowerCase().includes(normalizedSearchQuery) ||
+      node.path.toLowerCase().includes(normalizedSearchQuery);
 
     const secondDegreeNeighbors = new Set<string>();
     if (focusNodeId) {
@@ -628,6 +661,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
         selectedEdge?.source === edge.source &&
         selectedEdge?.target === edge.target &&
         selectedEdge?.type === edge.type;
+      const isSearchEdgeHit = !normalizedSearchQuery || isSearchMatch(u) || isSearchMatch(v);
 
       // Tiered edge styling based on neighbor degree
       let effectiveAlpha: number;
@@ -652,6 +686,9 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
         const baseAlpha = isHierarchy ? 0.5 : 0.4;
         effectiveAlpha = baseAlpha;
         lineWidth = (isHierarchy ? 1.5 : 1) / zoom;
+      }
+      if (!isSearchEdgeHit) {
+        effectiveAlpha = 0.05;
       }
 
       ctx.beginPath();
@@ -695,6 +732,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
     // Draw nodes
     nodesRef.current.forEach((node) => {
       const isCurrent = !node.isFolder && currentFile === node.path;
+      const isSearchHit = isSearchMatch(node);
       const nodeEmphasis = emphasis.get(node.id) ?? 0;
       // Tiered radius: hover 1.18x, first-degree 1.10x, second-degree 1.0x
       const radiusScale = nodeEmphasis > 0.85 ? 1.18
@@ -705,7 +743,8 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       const isHighlighted = nodeEmphasis > 0.16 || isCurrent;
 
       // Tiered node opacity: hover 1.0, first 0.92, second 0.55, bg dimmed
-      const nodeAlpha = nodeEmphasis > 0.85 ? 1.0
+      const nodeAlpha = normalizedSearchQuery && !isSearchHit ? 0.05
+        : nodeEmphasis > 0.85 ? 1.0
         : nodeEmphasis > 0.5 ? 0.92
         : nodeEmphasis > 0.2 ? 0.55
         : idleAlpha + (1 - idleAlpha) * nodeEmphasis;
@@ -718,6 +757,12 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       } else if (nodeEmphasis > 0.2 && !node.isFolder) {
         // 高亮时稍微调亮
         nodeColor = node.color || "hsl(var(--primary) / 0.8)";
+      }
+
+      if (!node.isFolder && node.connections === 0 && (!normalizedSearchQuery || isSearchHit)) {
+        nodeColor = "hsl(35, 85%, 55%)";
+      } else if (!node.isFolder && node.connections === 1 && !normalizedSearchQuery && !hasSelection) {
+        nodeColor = "hsl(190, 75%, 60%)";
       }
 
       if (node.isFolder) {
@@ -777,7 +822,8 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       if (showLabels && (isHighlighted || zoom > 0.8)) {
         const isHoveredOrSelected = nodeEmphasis > 0.85;
         const baseLabelAlpha = hasSelection ? 0.12 + 0.3 * (1 - focusBlend) : 0.72;
-        const labelAlpha = isHoveredOrSelected ? 1.0
+        const labelAlpha = normalizedSearchQuery && !isSearchHit ? 0.05
+          : isHoveredOrSelected ? 1.0
           : nodeEmphasis > 0.5 ? 0.85
           : nodeEmphasis > 0.2 ? 0.45
           : baseLabelAlpha;
@@ -826,7 +872,7 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
     ctx.restore();
     animationRef.current = requestAnimationFrame(render);
-  }, [params, zoom, pan, hoverNode, selectedNode, selectedEdge, currentFile, dimensions, getNodeBaseRadius, showLabels]);
+  }, [params, zoom, pan, hoverNode, selectedNode, selectedEdge, currentFile, dimensions, getNodeBaseRadius, showLabels, searchQuery]);
 
   useEffect(() => {
     animationRef.current = requestAnimationFrame(render);
@@ -852,6 +898,60 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       y: (screenY - cy - pan.y) / zoom + cy,
     };
   };
+
+  const focusGraphNode = useCallback((node: GraphNode) => {
+    const cx = dimensions.width / 2;
+    const cy = dimensions.height / 2;
+    const targetPanX = -zoom * (node.x - cx);
+    const targetPanY = -zoom * (node.y - cy);
+
+    setSelectedNode(node);
+    setSelectedEdge(null);
+    setHoverPreview(null);
+
+    if (searchPanAnimationRef.current) {
+      cancelAnimationFrame(searchPanAnimationRef.current);
+      searchPanAnimationRef.current = null;
+    }
+
+    const animatePan = (targetX: number, targetY: number) => {
+      setPan((current) => {
+        const dx = targetX - current.x;
+        const dy = targetY - current.y;
+
+        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+          searchPanAnimationRef.current = null;
+          return { x: targetX, y: targetY };
+        }
+
+        searchPanAnimationRef.current = requestAnimationFrame(() =>
+          animatePan(targetX, targetY),
+        );
+        return {
+          x: current.x + dx * 0.16,
+          y: current.y + dy * 0.16,
+        };
+      });
+    };
+
+    animatePan(targetPanX, targetPanY);
+  }, [dimensions, zoom]);
+
+  const handleSearchFocus = useCallback(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return;
+
+    const matchedNode = nodesRef.current.find(
+      (node) =>
+        !node.isFolder &&
+        (node.label.toLowerCase().includes(query) ||
+          node.path.toLowerCase().includes(query)),
+    );
+
+    if (!matchedNode) return;
+
+    focusGraphNode(matchedNode);
+  }, [focusGraphNode, searchQuery]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     // 右键点击不处理拖拽和节点点击（由 contextMenu 处理）
@@ -1047,6 +1147,85 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
       .filter(Boolean) as GraphNode[];
   }, [selectedNode]);
 
+  const currentIsolatedNotes = useMemo(() => {
+    return nodesRef.current.filter((node) => !node.isFolder && node.connections === 0);
+  }, [displayCounts.isolated, displayCounts.nodes, graphData]);
+
+  const selectedNodeInfo = useMemo(() => {
+    if (!selectedNode) return null;
+    const noteMeta = !selectedNode.isFolder ? noteIndex.get(selectedNode.id) ?? null : null;
+    const nodeBacklinks = noteMeta ? getBacklinks(noteMeta.name) : [];
+    const path = selectedNode.path;
+    const lastSlash = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+    const parentFolderPath = selectedNode.isFolder
+      ? path
+      : lastSlash >= 0
+        ? path.slice(0, lastSlash)
+        : "";
+    const lastModifiedLabel = noteMeta?.lastModified
+      ? `${new Date(noteMeta.lastModified).toLocaleDateString()} ${new Date(
+          noteMeta.lastModified,
+        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+      : null;
+
+    return {
+      noteMeta,
+      nodeBacklinks,
+      parentFolderPath,
+      lastModifiedLabel,
+    };
+  }, [getBacklinks, noteIndex, selectedNode]);
+
+  const missingLinkSuggestions = useMemo(() => {
+    const noteMeta = selectedNodeInfo?.noteMeta ?? null;
+    if (!selectedNode || selectedNode.isFolder || !noteMeta) return [];
+
+    const suggestions: Array<{ node: GraphNode; reason: string }> = [];
+    const connectedIds = new Set(connectedNodes.map((node) => node.id));
+    connectedIds.add(selectedNode.id);
+    const graphNodeMap = new Map(graphData.nodes.map((node) => [node.id, node]));
+    const currentLastSlash = Math.max(
+      selectedNode.path.lastIndexOf("/"),
+      selectedNode.path.lastIndexOf("\\"),
+    );
+    const currentFileParent =
+      currentLastSlash >= 0 ? selectedNode.path.slice(0, currentLastSlash) : "";
+    const currentName = noteMeta.name.toLowerCase();
+
+    for (const [path, note] of noteIndex.entries()) {
+      if (connectedIds.has(path)) continue;
+
+      const targetGraphNode = graphNodeMap.get(path);
+      if (!targetGraphNode || targetGraphNode.isFolder) continue;
+
+      const hasCommonTag = note.tags.some((tag) => noteMeta.tags.includes(tag));
+      const targetLastSlash = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+      const targetParent = targetLastSlash >= 0 ? path.slice(0, targetLastSlash) : "";
+      const isSameFolder = currentFileParent !== "" && currentFileParent === targetParent;
+      const targetName = note.name.toLowerCase();
+      const isTitleOverlap =
+        isSameFolder &&
+        ((targetName.length > 1 && currentName.includes(targetName)) ||
+          (currentName.length > 1 && targetName.includes(currentName)));
+
+      if (hasCommonTag) {
+        suggestions.push({
+          node: targetGraphNode,
+          reason: t.knowledgeGraph.reasonCommonTag,
+        });
+      } else if (isTitleOverlap) {
+        suggestions.push({
+          node: targetGraphNode,
+          reason: t.knowledgeGraph.reasonTitleOverlap,
+        });
+      }
+
+      if (suggestions.length >= 3) break;
+    }
+
+    return suggestions;
+  }, [connectedNodes, graphData.nodes, noteIndex, selectedNode, selectedNodeInfo, t]);
+
   const selectedEdgeNodes = useMemo(() => {
     if (!selectedEdge) return null;
     const source = nodesRef.current.find((node) => node.id === selectedEdge.source);
@@ -1216,10 +1395,84 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
             >
               <Settings size={16} />
             </button>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSearchFocus();
+                }
+              }}
+              placeholder={t.knowledgeGraph.searchPlaceholder}
+              className="mr-2 h-7 w-36 rounded-ui-sm border border-border/60 bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
+            />
+            <div className="ml-2 flex h-7 items-center gap-3 border-l border-border/40 pl-3">
+              <label className="flex cursor-pointer select-none items-center gap-1 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={showFolders}
+                  onChange={(e) => setShowFolders(e.target.checked)}
+                  disabled={onlyIsolated}
+                  className="h-3 w-3 cursor-pointer rounded border-border/60 bg-background text-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <span>{t.knowledgeGraph.filterShowFolders}</span>
+              </label>
+              <label className="flex cursor-pointer select-none items-center gap-1 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={onlyIsolated}
+                  onChange={(e) => {
+                    setOnlyIsolated(e.target.checked);
+                    if (e.target.checked) setOnlyConnected(false);
+                  }}
+                  className="h-3 w-3 cursor-pointer rounded border-border/60 bg-background text-primary focus:ring-0"
+                />
+                <span>{t.knowledgeGraph.filterOnlyIsolated}</span>
+              </label>
+              <label className="flex cursor-pointer select-none items-center gap-1 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={onlyConnected}
+                  onChange={(e) => {
+                    setOnlyConnected(e.target.checked);
+                    if (e.target.checked) setOnlyIsolated(false);
+                  }}
+                  className="h-3 w-3 cursor-pointer rounded border-border/60 bg-background text-primary focus:ring-0"
+                />
+                <span>{t.knowledgeGraph.filterOnlyConnected}</span>
+              </label>
+            </div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
               <span>
                 {displayCounts.nodes} {t.graph.nodes} · {displayCounts.edges} {t.graph.edges}
               </span>
+              <button
+                type="button"
+                onClick={() => setShowIsolatedList((prev) => !prev)}
+                className={cn(
+                  "inline-flex cursor-pointer select-none items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium transition-colors",
+                  showIsolatedList
+                    ? "border-amber-500/30 bg-amber-500/20 text-amber-500"
+                    : "border-amber-500/10 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400",
+                )}
+                title={t.knowledgeGraph.panelIsolatedTooltip}
+              >
+                <span>
+                  {t.knowledgeGraph.isolatedNotesCount.replace(
+                    "{count}",
+                    String(currentIsolatedNotes.length),
+                  )}
+                </span>
+                <ChevronDown
+                  size={12}
+                  className={cn(
+                    "transition-transform duration-150",
+                    showIsolatedList && "rotate-180",
+                  )}
+                />
+              </button>
               {isIndexing && (
                 <span>
                   {t.knowledgeGraph.indexingStatus
@@ -1273,6 +1526,50 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
 
         {/* Canvas */}
         <div ref={containerRef} className="flex-1 relative bg-popover dark:bg-background overflow-hidden">
+          {showIsolatedList && (
+            <div
+              className="pointer-events-auto absolute left-3 top-3 z-30 flex max-h-72 w-64 flex-col rounded-xl border border-border/80 bg-popover/95 p-3 shadow-elev-3 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
+              onWheel={(event) => event.stopPropagation()}
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-border/40 pb-2">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+                  {t.knowledgeGraph.panelIsolatedListTitle}
+                </span>
+                <button
+                  onClick={() => setShowIsolatedList(false)}
+                  className="rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                  title={t.common.close}
+                >
+                  <X size={13} />
+                </button>
+              </div>
+
+              <div className="flex-1 space-y-0.5 overflow-y-auto pt-1.5 pr-0.5">
+                {currentIsolatedNotes.length === 0 ? (
+                  <div className="py-4 text-center text-[11px] text-muted-foreground">
+                    {t.knowledgeGraph.panelIsolatedListEmpty}
+                  </div>
+                ) : (
+                  currentIsolatedNotes.map((node) => (
+                    <button
+                      key={node.id}
+                      onClick={() => {
+                        setSearchQuery(node.label);
+                        setShowIsolatedList(false);
+                        focusGraphNode(node);
+                      }}
+                      className="flex w-full cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      title={node.path}
+                    >
+                      <span className="h-1 w-1 shrink-0 rounded-full bg-amber-500/60" />
+                      <span className="truncate">{node.label}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
           {linkingFrom && (
             <div className="absolute top-3 left-3 z-20 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 text-xs shadow-elev-2">
               <Plus size={13} className="text-primary" />
@@ -1454,20 +1751,150 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
         )}
 
         {/* Node details */}
-        {selectedNode && (
-          <div className="p-3 border-t border-border/60 bg-popover dark:bg-background space-y-2 max-h-40 overflow-y-auto">
-            <div className="flex items-center gap-2">
-              <FileText size={14} className="text-primary" />
-              <span
-                className="text-sm font-medium text-foreground hover:text-primary cursor-pointer"
-                onClick={() => handleNodeClick(selectedNode)}
-              >
-                {selectedNode.label}
-              </span>
+        {selectedNode && selectedNodeInfo && (
+          <div className="max-h-56 space-y-3 overflow-y-auto border-t border-border/60 bg-popover p-3 dark:bg-background">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <FileText
+                  size={14}
+                  className={selectedNode.isFolder ? "text-muted-foreground" : "text-primary"}
+                />
+                <span
+                  className="cursor-pointer truncate text-sm font-medium text-foreground hover:text-primary"
+                  onClick={() => handleNodeClick(selectedNode)}
+                >
+                  {selectedNode.label}
+                </span>
+              </div>
+              <div className="flex shrink-0 gap-1.5">
+                <span className="rounded-ui bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  {selectedNode.isFolder ? t.knowledgeGraph.typeFolder : t.knowledgeGraph.typeNote}
+                </span>
+                {!selectedNode.isFolder && selectedNode.connections === 0 ? (
+                  <span className="animate-pulse rounded-ui border border-destructive/20 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
+                    {t.knowledgeGraph.statusIsolated}
+                  </span>
+                ) : (
+                  !selectedNode.isFolder && (
+                    <span className="rounded-ui border border-primary/10 bg-primary/5 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                      {t.knowledgeGraph.statusConnected}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
+
+            <div className="my-1 grid grid-cols-2 gap-x-4 gap-y-2 rounded-ui-sm border-y border-border/40 bg-muted/20 px-2 py-2.5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t.knowledgeGraph.panelOutbound}</span>
+                <span className="font-mono font-medium text-foreground">
+                  {selectedNodeInfo.noteMeta?.outgoingLinks.length ?? 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t.knowledgeGraph.panelInbound}</span>
+                <span className="font-mono font-medium text-foreground">
+                  {selectedNodeInfo.nodeBacklinks.length}
+                </span>
+              </div>
+              <div className="col-span-2 flex min-w-0 items-center justify-between gap-3">
+                <span className="shrink-0 text-muted-foreground">
+                  {t.knowledgeGraph.panelFolder}
+                </span>
+                <span
+                  className="truncate pl-4 text-right font-mono text-[11px] text-foreground"
+                  title={selectedNodeInfo.parentFolderPath}
+                >
+                  {selectedNodeInfo.parentFolderPath || "/"}
+                </span>
+              </div>
+              <div className="col-span-2 flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">{t.knowledgeGraph.panelStatus}</span>
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  {selectedNode.isFolder
+                    ? t.knowledgeGraph.typeFolder
+                    : selectedNode.connections === 0
+                      ? t.knowledgeGraph.statusIsolated
+                      : t.knowledgeGraph.statusConnected}
+                </span>
+              </div>
+              {!selectedNode.isFolder && selectedNodeInfo.lastModifiedLabel && (
+                <div className="col-span-2 flex items-center justify-between gap-3">
+                  <span className="text-muted-foreground">
+                    {t.knowledgeGraph.panelLastModified}
+                  </span>
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {selectedNodeInfo.lastModifiedLabel}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {!selectedNode.isFolder &&
+              selectedNodeInfo.noteMeta?.tags &&
+              selectedNodeInfo.noteMeta.tags.length > 0 && (
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {t.knowledgeGraph.panelTags}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedNodeInfo.noteMeta.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded border border-primary/10 bg-primary/5 px-1.5 py-0.5 text-[10px] text-primary"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {!selectedNode.isFolder && selectedNode.connections <= 1 && (
+              <div className="flex items-start gap-2 rounded-ui-sm border border-amber-500/15 bg-amber-500/5 p-2.5 text-xs leading-relaxed animate-fade-in">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                <div className="space-y-0.5">
+                  <div className="font-medium text-amber-500/90 dark:text-amber-400/90">
+                    {t.knowledgeGraph.panelSuggestions}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {selectedNode.connections === 0
+                      ? t.knowledgeGraph.suggestIsolated
+                      : t.knowledgeGraph.suggestWeaklyConnected}
+                  </p>
+                  {missingLinkSuggestions.length > 0 && (
+                    <div className="pointer-events-auto mt-1.5 space-y-1 border-t border-amber-500/10 pt-2">
+                      <div className="text-[10px] font-medium tracking-wider text-amber-500/80">
+                        {t.knowledgeGraph.panelMissingLinks}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {missingLinkSuggestions.map(({ node, reason }) => (
+                          <button
+                            key={node.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              void createLink(selectedNode, node);
+                            }}
+                            className="flex cursor-pointer items-center gap-1 rounded border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-600 transition-colors hover:bg-amber-500/20 dark:text-amber-400"
+                            title={`${node.label} (${reason})`}
+                          >
+                            <span>{node.label}</span>
+                            <span className="text-[9px] font-normal text-muted-foreground/60">
+                              ({reason})
+                            </span>
+                            <span className="ml-0.5 font-bold text-amber-500/80">+</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {connectedNodes.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground uppercase flex items-center gap-1">
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground">
                   <LinkIcon size={10} />
                   {t.knowledgeGraph.linkedNotes} ({connectedNodes.length})
                 </div>
@@ -1479,13 +1906,13 @@ export function KnowledgeGraph({ className = "", isolatedNode }: KnowledgeGraphP
                         setSelectedNode(node);
                         openFile(node.path, { preview: true });
                       }}
-                      className="text-xs px-2 py-0.5 bg-muted rounded hover:bg-primary/20 text-muted-foreground hover:text-primary transition-colors"
+                      className="rounded bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary/20 hover:text-primary"
                     >
                       {node.label}
                     </button>
                   ))}
                   {connectedNodes.length > 8 && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="self-center pl-1 font-mono text-xs text-muted-foreground">
                       +{connectedNodes.length - 8}
                     </span>
                   )}

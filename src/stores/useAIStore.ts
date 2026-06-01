@@ -23,6 +23,7 @@ import {
   type MessageContent,
 } from "@/services/llm";
 import { getCurrentTranslations } from "@/stores/useLocaleStore";
+import { useNoteIndexStore } from "@/stores/useNoteIndexStore";
 import { formatUserFriendlyError } from "./aiErrorFormatting";
 
 import { encryptApiKey, decryptApiKey } from "@/lib/crypto";
@@ -139,6 +140,108 @@ function buildProviderSettingsPayload(config: AIConfig): ProviderRuntimeSettings
     settings.maxOutputTokens = config.maxOutputTokens || undefined;
   }
   return settings;
+}
+
+type GraphNeighborRelation = "outbound" | "inbound";
+
+interface GraphNeighborContext {
+  markdown: string;
+  files: FileReference[];
+}
+
+interface LoadedGraphNeighborContext {
+  file: FileReference;
+  markdown: string;
+}
+
+function formatGraphNeighborRelation(relation: GraphNeighborRelation): string {
+  return relation === "outbound"
+    ? "当前笔记提及的关联主题"
+    : "引用了当前笔记的母题";
+}
+
+async function fetchGraphNeighborhoodContext(
+  currentFilePath: string | undefined,
+): Promise<GraphNeighborContext> {
+  if (!currentFilePath) return { markdown: "", files: [] };
+
+  try {
+    const { noteIndex, getBacklinks } = useNoteIndexStore.getState();
+    const noteMeta = noteIndex.get(currentFilePath);
+    if (!noteMeta) return { markdown: "", files: [] };
+
+    const noteByName = new Map<string, { path: string; name: string }>();
+    for (const [path, note] of noteIndex.entries()) {
+      const key = note.name.trim().toLowerCase();
+      if (!noteByName.has(key)) noteByName.set(key, { path, name: note.name });
+    }
+
+    const pathsToFetch: Array<{
+      name: string;
+      path: string;
+      relation: GraphNeighborRelation;
+    }> = [];
+    const seenPaths = new Set<string>([currentFilePath]);
+
+    for (const name of noteMeta.outgoingLinks.slice(0, 3)) {
+      const found = noteByName.get(name.trim().toLowerCase());
+      if (!found || seenPaths.has(found.path)) continue;
+      seenPaths.add(found.path);
+      pathsToFetch.push({ name: found.name, path: found.path, relation: "outbound" });
+    }
+
+    for (const inbound of getBacklinks(noteMeta.name).slice(0, 3)) {
+      const found = noteByName.get(inbound.name.trim().toLowerCase());
+      const path = found?.path ?? inbound.path;
+      if (!path || seenPaths.has(path)) continue;
+      seenPaths.add(path);
+      pathsToFetch.push({
+        name: found?.name ?? inbound.name,
+        path,
+        relation: "inbound",
+      });
+    }
+
+    if (pathsToFetch.length === 0) return { markdown: "", files: [] };
+
+    const loadedContexts: Array<LoadedGraphNeighborContext | null> = await Promise.all(
+      pathsToFetch.map(async (item): Promise<LoadedGraphNeighborContext | null> => {
+        try {
+          const content = await readFile(item.path);
+          const relationLabel = formatGraphNeighborRelation(item.relation);
+          return {
+            file: {
+              path: item.path,
+              name: `[Graph ${item.relation}] ${item.name}`,
+              content: `图谱关系: ${relationLabel}\n\n${content}`,
+            },
+            markdown:
+              `#### 关联笔记: ${item.name} (图谱关系: ${relationLabel})\n` +
+              `路径: ${item.path}\n` +
+              `\`\`\`markdown\n${content}\n\`\`\``,
+          };
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    const validContexts = loadedContexts.filter(
+      (item): item is LoadedGraphNeighborContext => item !== null,
+    );
+    if (validContexts.length === 0) return { markdown: "", files: [] };
+
+    return {
+      files: validContexts.map((item) => item.file),
+      markdown:
+        "\n\n== 图谱网状关联上下文 (由知识图谱一跳邻居节点驱动) ==\n" +
+        "AI 提示：以下笔记在用户的知识图谱中与当前探讨的笔记有直接的「双链/反链」物理连线，请在回答时结合这些隐含的网状脉络进行综合理解和结构化应答：\n\n" +
+        validContexts.map((item) => item.markdown).join("\n\n"),
+    };
+  } catch (error) {
+    console.warn("[AIStore] Failed to load graph neighborhood context", error);
+    return { markdown: "", files: [] };
+  }
 }
 
 interface AIState {
@@ -599,6 +702,10 @@ export const useAIStore = create<AIState>()(
           if (filesToSend.length === 0 && currentFile) {
             filesToSend = [currentFile];
           }
+          const graphContext = await fetchGraphNeighborhoodContext(currentFile?.path);
+          if (graphContext.files.length > 0) {
+            filesToSend = [...filesToSend, ...graphContext.files];
+          }
 
           let response;
           try {
@@ -802,11 +909,13 @@ export const useAIStore = create<AIState>()(
           const chatPrompt = t.prompts.chat;
           const basePrompt = chatPrompt.system;
           
-          const systemMessage = filesToSend.length > 0
+          let systemMessage = filesToSend.length > 0
             ? `${basePrompt}\n\n${chatPrompt.contextFiles}\n\n${filesToSend.map(f => 
                 `### ${f.name}\n\`\`\`\n${f.content}\n\`\`\``
               ).join("\n\n")}`
             : basePrompt;
+          const graphContext = await fetchGraphNeighborhoodContext(currentFile?.path);
+          systemMessage += graphContext.markdown;
 
           // 从 store 获取最新的 messages，而不是使用闭包中的旧值
           const currentMessages = [...get().messages];
