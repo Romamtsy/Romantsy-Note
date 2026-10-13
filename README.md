@@ -1,189 +1,52 @@
-<div align="center">
-
-<img src="build-resources/icon.png" alt="Romantsy-Note Logo" width="120" height="120" />
-
 # Romantsy-Note
 
-**Local-first AI note-taking app**
+一个本地优先的 AI 笔记桌面应用（毕业设计）。
 
-Your notes stay on your device. Romantsy-Note helps you write, connect, search, and refine knowledge with AI while keeping data ownership in your hands.
+笔记以纯 Markdown 文件保存在本地，应用在本地完成编辑、双链、图谱与 AI 辅助写作，数据默认不离开设备。
 
-[![GitHub Release](https://img.shields.io/github/v/release/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
-[![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org/)
+## 功能
 
-[![CI](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/ci.yml)
-[![Security Audit](https://img.shields.io/github/actions/workflow/status/blueberrycongee/Romantsy-Note/security-audit.yml?branch=main&style=flat-square&label=Security%20Audit)](https://github.com/blueberrycongee/Romantsy-Note/actions/workflows/security-audit.yml)
-[![Downloads](https://img.shields.io/github/downloads/blueberrycongee/Romantsy-Note/total?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
-[![GitHub Stars](https://img.shields.io/github/stars/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/stargazers)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/blueberrycongee/Romantsy-Note?style=flat-square)](https://github.com/blueberrycongee/Romantsy-Note/commits/main)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
+- **Markdown 编辑器**：源码 / 实时预览 / 阅读三种模式，支持 LaTeX、Mermaid、代码高亮。
+- **双向链接与知识图谱**：`[[WikiLinks]]` 双向链接、反链、标签、全局与局部图谱。
+- **AI 助手**：支持多家模型服务商（OpenAI、Anthropic、DeepSeek、Gemini、Ollama 等），可读写本地笔记。
+- **PDF 阅读与批注**：内置 PDF 阅读器，支持高亮、下划线、笔记，批注可导出为 Markdown。
+- **图片管理**：图片查看、批量管理、粘贴插图、AI 生图。
+- **插件与主题**：插件扩展能力与多套主题。
 
-**Language**: English (default) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md) · [Français](./README.fr.md) · [Deutsch](./README.de.md) · [Italiano](./README.it.md) · [Português (Brasil)](./README.pt-BR.md) · [Русский](./README.ru.md)
+## 技术栈
 
-</div>
+- 桌面框架：Electron
+- 前端：React 18 + TypeScript + Tailwind CSS
+- 编辑器：CodeMirror 6
+- 状态管理：Zustand
+- 本地后端（可选）：Rust + axum + SQLite
 
----
+## 快速开始
 
-<h2 align="center">Why Romantsy-Note</h2>
-
-- **Local-first by design**: your vault is local, and you decide what gets sent to model providers.
-- **Knowledge-centered workflow**: Markdown editing, WikiLinks, graph view, and AI agents work as one system.
-- **AI that can actually act**: Agent mode supports real editing, planning, and automation tasks.
-
----
-
-<h2 align="center">Download</h2>
-
-<div align="center">
-
-Get the latest build from [Releases](https://github.com/blueberrycongee/Romantsy-Note/releases):
-
-| Platform | Package |
-|----------|---------|
-| Windows | `.exe` (NSIS) |
-| macOS (Universal) | `.dmg` / `.zip` |
-| Linux | `.AppImage` |
-
-</div>
-
----
-
-<h2 align="center">Screenshots</h2>
-
-<p align="center">
-  <img src="docs/screenshots/ai-agent.png" alt="AI Agent" width="800" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/knowledge-graph.png" alt="Knowledge Graph" width="800" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/editor-latex.png" alt="Editor" width="800" />
-</p>
-
----
-
-<h2 align="center">Features</h2>
-
-<h3 align="center">AI workspace</h3>
-
-- Agent mode for editing, planning, and task automation
-- Multi-provider: OpenAI, Anthropic (Claude), Google (Gemini), DeepSeek, Moonshot (Kimi), Zhipu (GLM), MiMo, Qwen, Groq, OpenRouter, Ollama, plus any OpenAI-compatible endpoint
-- Orchestrated agent runtime for heavier tasks, with a fast path for simpler requests
-
-<h3 align="center">Editor and knowledge graph</h3>
-
-- Markdown source / live preview / reading modes
-- Bidirectional links with `[[WikiLinks]]`
-- LaTeX, Mermaid, and code highlighting
-- Knowledge graph (global) and local graph (per-note neighborhood)
-
-<h3 align="center">Reading and capture</h3>
-
-- Built-in PDF reader with highlight, underline, and annotations
-- Save annotation output as Markdown
-- Send selected content directly into AI context
-
-<h3 align="center">Extra capabilities</h3>
-
-- Real-time voice input
-- WebDAV sync
-- Flashcard review
-- Conversation export
-- Skill manager (workspace / user / built-in agent skills)
-- 15 themes
-
-<h3 align="center">Mobile companions</h3>
-
-- Native iOS app (SwiftUI) and Android app (Kotlin + Jetpack Compose) under `mobile/`
-- Pair to your desktop with the built-in Mobile Gateway (QR code + token) for direct LAN sync
-- Cross-network access through the optional self-hosted relay — see `docs/self-host.md`
-
-<h3 align="center">Plugin ecosystem (Developer Preview)</h3>
-
-- Load plugins from workspace / user / built-in directories
-- Runtime permission model for plugin capabilities
-- Slash command extension API
-- Developer guide: `docs/plugin-ecosystem.md`
-
----
-
-<h2 align="center">Quick Start</h2>
-
-1. Install Romantsy-Note from Releases.
-2. Choose a local folder as your vault on first launch.
-3. Configure a model provider and API key in the AI panel, then optionally choose your preferred model.
-4. Create your first note and start linking with `[[WikiLinks]]`.
-
----
-
-<h2 align="center">Guides</h2>
-
-<h3 align="center">Recommended user guides</h3>
-
-- English: `docs/user-flow.md`
-- 简体中文: `docs/user-flow.zh-CN.md`
-- 日本語: `docs/user-flow.ja.md`
-
-<h3 align="center">Self-hosted relay (cross-network mobile access)</h3>
-
-- English: `docs/self-host.md`
-- 简体中文: `docs/self-host.zh-CN.md`
-
----
-
-<h2 align="center">Build from Source</h2>
-
-Requirements:
-
-- Node.js 22+
+环境要求：Node.js 22+
 
 ```bash
-git clone https://github.com/blueberrycongee/Romantsy-Note.git
-cd Romantsy-Note
 npm install
-npm run dev          # dev (electron-vite + Electron)
-npm run build        # production bundle into out/
-npm run dist:mac     # sign + package a dmg/zip (also dist:win, dist:linux)
+npm run dev        # 开发模式
+npm run build      # 构建
+npm run dist:mac   # 打包（另有 dist:win / dist:linux）
 ```
 
----
+## 目录结构
 
-<h2 align="center">Tech Stack</h2>
+```
+src/       前端渲染进程（React）
+electron/  Electron 主进程
+server/    自部署后端（Rust，可选）
+docs/      项目文档
+```
 
-- Desktop: Electron 41 (Chromium + Node.js main process)
-- Frontend: React 18, TypeScript, Tailwind CSS
-- Editor: CodeMirror 6
-- State: Zustand
-- Agent runtime: Vercel AI SDK (`ai`)
-- Mobile: SwiftUI (iOS), Kotlin + Jetpack Compose (Android) — `mobile/`
-- Self-host relay (optional): Rust + axum + sqlx + Yjs CRDT — `server/`
+## 文档
 
----
+- 用户指南：`docs/user-flow.zh-CN.md`
+- 设计规范：`docs/design-system.md`
+- 逆向工程文档：`docs/reverse/`
 
-<h2 align="center">Open Source Components</h2>
+## 许可证
 
-- Editor core: [codemirror-live-markdown](https://github.com/blueberrycongee/codemirror-live-markdown)
-
----
-
-<h2 align="center">Contributors</h2>
-
-<a href="https://github.com/blueberrycongee/Romantsy-Note/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=blueberrycongee/Romantsy-Note" />
-</a>
-
----
-
-<h2 align="center">License</h2>
-
-[Apache License 2.0](LICENSE)
-
----
-
-<h2 align="center">Star History</h2>
-
-[![Star History Chart](https://api.star-history.com/svg?repos=blueberrycongee/Romantsy-Note&type=Date)](https://star-history.com/#blueberrycongee/Romantsy-Note&Date)
+[Apache License 2.0](./LICENSE)
